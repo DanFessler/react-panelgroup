@@ -28,10 +28,10 @@
     "react": "^15.3.1",
     "react-dom": "^15.3.1"
   },
-  "author": "",
-  "homepage": "",
+  "author": "Dan Fessler",
+  "homepage": "www.DanFessler.com",
   "license": "MIT",
-  "repository": "",
+  "repository": "https://github.com/DanFessler/react-panelgroup",
   "keywords": [
     "react-component"
   ]
