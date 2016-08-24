@@ -29,7 +29,7 @@
     "react-dom": "^15.3.1"
   },
   "author": "Dan Fessler",
-  "homepage": "www.DanFessler.com",
+  "homepage": "http://www.DanFessler.com",
   "license": "MIT",
   "repository": "https://github.com/DanFessler/react-panelgroup",
   "keywords": [
