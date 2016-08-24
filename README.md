@@ -1,8 +1,8 @@
 # react-panelgroup
 
 [![Travis][build-badge]][build]
-[![npm package][npm-badge]][npm]
-[![Coveralls][coveralls-badge]][coveralls]
+<!-- [![npm package][npm-badge]][npm]
+[![Coveralls][coveralls-badge]][coveralls] -->
 
 Describe react-panelgroup here.
 
