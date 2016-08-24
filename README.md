@@ -1,16 +1,84 @@
-# react-panelgroup
+## [React-PanelGroup]() [![Travis][build-badge]][build] [![PRs Welcome][PR-badge]][PRwelcome]
 
-[![Travis][build-badge]][build]
-<!-- [![npm package][npm-badge]][npm]
-[![Coveralls][coveralls-badge]][coveralls] -->
+A React component for resizable panel group layouts
 
-Describe react-panelgroup here.
-
-[build-badge]: https://img.shields.io/travis/DanFessler/react-panelgroup/master.png?style=flat-square
+[build-badge]: https://img.shields.io/travis/DanFessler/react-panelgroup/master.svg?style=flat
 [build]: https://travis-ci.org/DanFessler/react-panelgroup
 
-<!-- [npm-badge]: https://img.shields.io/npm/v/npm-package.png?style=flat-square
-[npm]: https://www.npmjs.org/package/npm-package
+[PR-badge]: https://img.shields.io/badge/PRs-welcome-brightgreen.svg
+[PRwelcome]: CONTRIBUTING.md
 
-[coveralls-badge]: https://img.shields.io/coveralls/DanFessler/react-panelgroup/master.png?style=flat-square
-[coveralls]: https://coveralls.io/github/DanFessler/react-panelgroup -->
+
+## Features
+
+* **Absolute & Relative Sizing:** <br/>
+Choose between absolute pixel sizing and relative weights to describe your layout. Even mix the two per panel for more complex layouts. Supports fixed-size, dynamic (absolute pixel), and stretchy (relative weights) resizing
+<br/><br/>
+* **Neighbor-Aware Resizing:** <br/>
+When a panel is resized beyond it's extents, it will begin to push or pull at it's neighbors recursively.
+<br/><br/>
+* **Column & Row Orientations:** <br/>
+Supports vertical and horizontal orientations. Nest them together to produce grid-like layouts
+
+
+## Installation
+
+```sh
+$ npm install --save react-panelgroup
+```
+
+## Examples
+
+**Defaults:**<br/>
+When not specifying any props, the panel group defaults to a horizontal orientation with panels of equal (stretchy) widths.  PanelGroup will always try to entirely fill it's container.
+```jsx
+<PanelGroup>
+	<div>panel 1</div>
+    <div>panel 2</div>
+    <div>panel 3</div>
+</PanelGroup>
+```
+<br/>
+**Column layout:**<br/>
+Setting the direction prop to "column" will result in a vertical layout
+```jsx
+<PanelGroup direction="column">
+	<div>panel 1</div>
+    <div>panel 2</div>
+    <div>panel 3</div>
+</PanelGroup>
+```
+<br/>
+**Defined panel sizes:**<br/>
+Providing panelWidths with an array of objects defining each panel's size parameters will set the initial sizing for each panel.  If any property is missing, it will resort to the default for that property.
+```jsx
+<PanelGroup panelWidths={[
+	{size: 100, minSize:50, resize: "dynamic"},
+    {minSize:100, resize: "stretch"},
+    {size: 100, minSize:50, resize: "dynamic"}
+]}>
+	<div>panel 1</div>
+    <div>panel 2</div>
+    <div>panel 3</div>
+</PanelGroup>
+```
+
+## Contribute
+
+### Prerequisites
+[Node.js](http://nodejs.org/) >= v4 must be installed.
+
+### Installation
+- Running `npm install` in the components's root directory will install everything you need for development.
+
+### Demo Development Server
+- `npm start` will run a development server with the component's demo app at [http://localhost:3000](http://localhost:3000) with hot module reloading.
+
+### Running Tests
+- `npm test` will run the tests once.
+- `npm run test:coverage` will run the tests and produce a coverage report in `coverage/`.
+- `npm run test:watch` will run the tests on every change.
+
+### Building
+- `npm run build` will build the component for publishing to npm and also bundle the demo app.
+- `npm run clean` will delete built resources.
