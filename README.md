@@ -36,7 +36,7 @@ $ npm install --save react-panelgroup
 When not specifying any props, the panel group defaults to a horizontal orientation with panels of equal (stretchy) widths.  PanelGroup will always try to entirely fill it's container.
 ```jsx
 <PanelGroup>
-	<div>panel 1</div>
+  <div>panel 1</div>
   <div>panel 2</div>
   <div>panel 3</div>
 </PanelGroup>
@@ -46,7 +46,7 @@ When not specifying any props, the panel group defaults to a horizontal orientat
 Setting the direction prop to "column" will result in a vertical layout
 ```jsx
 <PanelGroup direction="column">
-	<div>panel 1</div>
+  <div>panel 1</div>
   <div>panel 2</div>
   <div>panel 3</div>
 </PanelGroup>
