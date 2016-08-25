@@ -109,6 +109,7 @@ var PanelGroup = React.createClass({
       // in the child component, but this was easier for now
       var panelStyle = {
         [this.getSizeDirection()]: this.state.panels[i].size,
+        [this.props.direction === "row"? "height" : "width"]: "100%",
         ["min"+this.getSizeDirection(true)]: this.state.panels[i].resize === "stretch"? 0 : this.state.panels[i].size,
 
         flexGrow: this.state.panels[i].resize === "stretch"? 1 : 0,
