@@ -17,13 +17,15 @@
     "start": "nwb serve-react-demo",
     "test": "nwb test",
     "test:coverage": "nwb test --coverage",
-    "test:watch": "nwb test --server"
+    "test:watch": "nwb test --server",
+    "deploy": "gh-pages -d demo/dist"
   },
   "dependencies": {},
   "peerDependencies": {
     "react": "15.x"
   },
   "devDependencies": {
+    "gh-pages": "^0.11.0",
     "nwb": "0.12.x",
     "react": "^15.3.1",
     "react-dom": "^15.3.1"
