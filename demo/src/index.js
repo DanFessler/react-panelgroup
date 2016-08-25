@@ -9,12 +9,14 @@ var code1 =
   <Content>panel 2</Content>
   <Content>panel 3</Content>
 </PanelGroup>`;
+
 var code2 =
 `<PanelGroup direction="column" borderColor="grey">
   <Content>panel 1</Content>
   <Content>panel 2</Content>
   <Content>panel 3</Content>
 </PanelGroup>`;
+
 var code3 =
 `<PanelGroup direction="row" borderColor="grey">
   <PanelGroup direction="column" borderColor="grey">
@@ -28,6 +30,7 @@ var code3 =
     <Content>panel 6</Content>
   </PanelGroup>
 </PanelGroup>`;
+
 var code4 =
 `<PanelGroup borderColor="grey" panelWidths={[
   {size: 100, minSize:50, resize: "dynamic"},
@@ -127,30 +130,36 @@ let ColumnLayout = function(props) {
       <Content>panel 1</Content>
       <Content>panel 2</Content>
       <Content>panel 3</Content>
-      </PanelGroup>
-      )
-      }
+    </PanelGroup>
+  )
+}
 
-      let NestedLayout = function(props) {
-      return (
-      <PanelGroup direction="row" borderColor="#DDD" spacing={2}>
+let NestedLayout = function(props) {
+  var containerStyle = {
+    width: "100%",
+    height: "100%",
+    flexGrow: 1,
+    flexShrink: 1,
+  }
+  return (
+    <PanelGroup direction="row" borderColor="#DDD" spacing={2}>
       <PanelGroup direction="column" borderColor="#DDD" spacing={2}>
-      <Content>panel 1</Content>
-      <Content>panel 2</Content>
-      <Content>panel 3</Content>
+        <Content>panel 1</Content>
+        <Content>panel 2</Content>
+        <Content>panel 3</Content>
       </PanelGroup>
       <Content>panel 4</Content>
       <PanelGroup direction="column" borderColor="#DDD" spacing={2}>
-      <Content>panel 5</Content>
-      <Content>panel 6</Content>
+        <Content>panel 5</Content>
+        <Content>panel 6</Content>
       </PanelGroup>
-      </PanelGroup>
-      )
-      }
+    </PanelGroup>
+  )
+}
 
-      let DefinedLayout = function(props) {
-      return (
-      <PanelGroup borderColor="#DDD" spacing={2} panelWidths={[
+let DefinedLayout = function(props) {
+  return (
+    <PanelGroup borderColor="#DDD" spacing={2} panelWidths={[
       {size: 100, minSize:50, resize: "dynamic"},
       {minSize:100, resize: "stretch"},
       {size: 100, minSize:50, resize: "dynamic"}
