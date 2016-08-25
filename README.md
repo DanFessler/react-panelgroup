@@ -19,13 +19,14 @@ When a panel is resized beyond it's extents, it will begin to push or pull at it
 <br/><br/>
 * **Column & Row Orientations:** <br/>
 Supports vertical and horizontal orientations. Nest them together to produce grid-like layouts
-
+<br/><br/>
 
 ## Installation
 
 ```sh
 $ npm install --save react-panelgroup
 ```
+<br/>
 
 ## Examples
 
@@ -62,6 +63,29 @@ Providing panelWidths with an array of objects defining each panel's size parame
     <div>panel 3</div>
 </PanelGroup>
 ```
+<br/>
+
+## Component Props
+
+- `spacing: number`<br/>
+sets the width of the border between each panel <br/><br/>
+- `borderColor: Valid CSS color string`<br/>
+Optionally defines a border color for panel dividers. Defaults to "transparent" <br/><br/>
+- `panelColor: Valid CSS color string`<br/>
+Optionally defines a background color for the panels. Defaults to "transparent" <br/><br/>
+- `direction: [ "row" | "column" ]`<br/>
+Sets the orientation of the panel group <br/><br/>
+- `panelWidths: [panelWidth, ...]`<br/>
+An array of panelWidth objects to initialize each panel with.  If a property is missing, or an index is null, it will resort to default values <br/><br/>
+- `panelWidth.size: number`<br/>
+Initial panel size. If panelWidth.resize is "fixed" or "dynamic" the size will be pixel units.  If panelWidth.resize is "stretch" then it is treated as a relative weight: Defaults to 256<br/><br/>
+- `panelWidth.minSize: number`<br/>
+minimum size of panel in pixels.  Defaults to 48 <br/><br/>
+- `panelWidth.resize: [ "fixed" | "dynamic" | "stretch" ]`<br/>
+Sets the resize behavior of the panel.  Fixed cannot be resized. Defaults to "stretch" <br/><br/>
+- `onUpdate: function()`<br/>
+Callback to recieve state updates from PanelGroup to allow controlling state externally.  Returns an array of panelWidths <br/><br/>
+
 
 ## Contribute
 
