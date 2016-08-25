@@ -35,8 +35,8 @@ When not specifying any props, the panel group defaults to a horizontal orientat
 ```jsx
 <PanelGroup>
 	<div>panel 1</div>
-    <div>panel 2</div>
-    <div>panel 3</div>
+  <div>panel 2</div>
+  <div>panel 3</div>
 </PanelGroup>
 ```
 <br/>
@@ -45,8 +45,25 @@ Setting the direction prop to "column" will result in a vertical layout
 ```jsx
 <PanelGroup direction="column">
 	<div>panel 1</div>
+  <div>panel 2</div>
+  <div>panel 3</div>
+</PanelGroup>
+```
+<br/>
+**Nested layout:**<br/>
+Nest multiple panelGroups for more complex layouts
+```jsx
+<PanelGroup direction="row">
+  <PanelGroup direction="column">
+    <div>panel 1</div>
     <div>panel 2</div>
     <div>panel 3</div>
+  </PanelGroup>
+  <div>panel 4</div>
+	<PanelGroup direction="column">
+    <div>panel 5</div>
+    <div>panel 6</div>
+  </PanelGroup>
 </PanelGroup>
 ```
 <br/>
