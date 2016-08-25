@@ -1,6 +1,6 @@
 ## [React-PanelGroup](https://danfessler.github.io/react-panelgroup/) [![Travis][build-badge]][build] [![PRs Welcome][PR-badge]][PRwelcome]
 
-A React component for resizable panel group layouts<br/><br/>
+A React component for resizable panel group layouts<br/>
 
 Demo: [https://danfessler.github.io/react-panelgroup/](https://danfessler.github.io/react-panelgroup/)
 
