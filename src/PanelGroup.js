@@ -66,8 +66,8 @@ var PanelGroup = React.createClass({
 
         if (i < props.panelWidths.length && props.panelWidths[i]) {
           var widthObj = {
-            size:    props.panelWidths[i].size? props.panelWidths[i].size : defaultSize,
-            minSize: props.panelWidths[i].minSize? props.panelWidths[i].minSize : defaultMinSize,
+            size:    props.panelWidths[i].size !== null ? props.panelWidths[i].size : defaultSize,
+            minSize: props.panelWidths[i].minSize !== null ? props.panelWidths[i].minSize : defaultMinSize,
             resize:  props.panelWidths[i].resize? props.panelWidths[i].resize :
                      props.panelWidths[i].size? "dynamic" : defaultResize,
           }
