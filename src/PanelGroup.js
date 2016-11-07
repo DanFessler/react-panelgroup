@@ -19,9 +19,33 @@ var PanelGroup = React.createClass({
   },
 
   // reload panel configuration if props update
-  componentWillReceiveProps: function(props) {
-    if (this.props !== props)
-      this.setState(this.loadPanels(props));
+  componentWillReceiveProps: function(nextProps) {
+
+    var nextPanels = nextProps.panelWidths;
+
+    // Only update from props if we're supplying the props in the first place
+    if (nextPanels.length) {
+
+      // if the panel array is a different size we know to update
+      if (this.state.panels.length !== nextPanels.length) {
+        this.setState(this.loadPanels(nextProps));
+      }
+      // otherwise we need to iterate to spot any difference
+      else {
+        for (var i=0; i<nextPanels.length; i++) {
+          if (
+            this.state.panels[i].size !== nextPanels[i].size ||
+            this.state.panels[i].minSize !== nextPanels[i].minSize ||
+            this.state.panels[i].resize !== nextPanels[i].resize
+          ) {
+            this.setState(this.loadPanels(nextProps));
+            break;
+          }
+        }
+      }
+
+    }
+
   },
 
   // load provided props into state
@@ -66,9 +90,9 @@ var PanelGroup = React.createClass({
 
   // Pass internal state out if there's a callback for it
   // Useful for saving panel configuration
-  componentWillUpdate: function() {
+  onUpdate: function(panels) {
     if (this.props.onUpdate) {
-      this.props.onUpdate(this.state.props.slice())
+      this.props.onUpdate(panels.slice())
     }
   },
 
@@ -157,6 +181,7 @@ var PanelGroup = React.createClass({
     var tempPanels = this.state.panels.slice();
     var returnDelta = this.resizePanel(i, this.props.direction === "row" ? delta.x : delta.y, tempPanels);
     this.setState({panels: tempPanels});
+    this.onUpdate(tempPanels)
     return returnDelta;
   },
 
