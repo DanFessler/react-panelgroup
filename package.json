@@ -1,6 +1,6 @@
 {
-  "name": "react-panelgroup",
-  "version": "1.0.2",
+  "name": "@textpress/react-panelgroup",
+  "version": "1.0.3",
   "description": "react-panelgroup React component",
   "main": "lib/PanelGroup.js",
   "jsnext:main": "es/PanelGroup.js",
@@ -30,10 +30,9 @@
     "react": "^15.3.1",
     "react-dom": "^15.3.1"
   },
-  "author": "Dan Fessler",
-  "homepage": "http://www.DanFessler.com",
+  "contributors": [ "Dan Fessler", "Textpress" ],
   "license": "MIT",
-  "repository": "https://github.com/DanFessler/react-panelgroup",
+  "repository": "https://github.com/textpress/react-panelgroup",
   "keywords": [
     "react-component"
   ]
