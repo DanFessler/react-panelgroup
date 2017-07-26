@@ -8,6 +8,7 @@ var PanelGroup = React.createClass({
   getDefaultProps: function() {
     return {
       spacing: 1,
+      bleed: 4,
       direction: "row",
       panelWidths: []
     };
@@ -167,7 +168,7 @@ var PanelGroup = React.createClass({
 
       // add a handle between panels
       if (i < initialChildren.length-1) {
-        newChildren.push(<Divider borderColor={this.props.borderColor} key={"divider"+i} panelID={i} handleResize={this.handleResize} dividerWidth={this.props.spacing} direction={this.props.direction} showHandles={this.props.showHandles}/>);
+        newChildren.push(<Divider borderColor={this.props.borderColor} key={"divider"+i} panelID={i} handleResize={this.handleResize} dividerWidth={this.props.spacing} handleBleed={this.props.bleed} direction={this.props.direction} showHandles={this.props.showHandles}/>);
       }
     }
 
@@ -378,13 +379,6 @@ var Panel = React.createClass({
 
 
 var Divider = React.createClass({
-
-  getDefaultProps: function() {
-    return {
-      dividerWidth: 1,
-      handleBleed: 4,
-    };
-  },
 
   getInitialState: function () {
     return {
