@@ -13,27 +13,26 @@ Demo: [https://danfessler.github.io/react-panelgroup/](https://danfessler.github
 
 ## Features
 
-* **Absolute & Relative Sizing:** <br/>
-Choose between absolute pixel sizing and relative weights to describe your layout. Even mix the two per panel for more complex layouts. Supports fixed-size, dynamic (absolute pixel), and stretchy (relative weights) resizing
-<br/><br/>
-* **Neighbor-Aware Resizing:** <br/>
-When a panel is resized beyond it's extents, it will begin to push or pull at it's neighbors recursively.
-<br/><br/>
-* **Column & Row Orientations:** <br/>
-Supports vertical and horizontal orientations. Nest them together to produce grid-like layouts
-<br/><br/>
+ * **Absolute & Relative Sizing**  
+   Choose between absolute pixel sizing and relative weights to describe your layout. Even mix the two per panel for more complex layouts. Supports fixed-size, dynamic (absolute pixel), and stretchy (relative weights) resizing
+ * **Neighbor-Aware Resizing**  
+   When a panel is resized beyond it's extents, it will begin to push or pull at it's neighbors recursively.
+ * **Column & Row Orientations**  
+   Supports vertical and horizontal orientations. Nest them together to produce grid-like layouts
 
 ## Installation
 
 ```sh
 $ npm install --save react-panelgroup
 ```
-<br/>
+
 
 ## Examples
 
-**Defaults:**<br/>
+### Defaults
+
 When not specifying any props, the panel group defaults to a horizontal orientation with panels of equal (stretchy) widths.  PanelGroup will always try to entirely fill it's container.
+
 ```jsx
 <PanelGroup>
   <div>panel 1</div>
@@ -41,9 +40,11 @@ When not specifying any props, the panel group defaults to a horizontal orientat
   <div>panel 3</div>
 </PanelGroup>
 ```
-<br/>
-**Column layout:**<br/>
+
+### Column layout
+
 Setting the direction prop to "column" will result in a vertical layout
+
 ```jsx
 <PanelGroup direction="column">
   <div>panel 1</div>
@@ -51,9 +52,12 @@ Setting the direction prop to "column" will result in a vertical layout
   <div>panel 3</div>
 </PanelGroup>
 ```
-<br/>
-**Nested layout:**<br/>
+
+
+### Nested layout
+
 Nest multiple panelGroups for more complex layouts
+
 ```jsx
 <PanelGroup direction="row">
   <PanelGroup direction="column">
@@ -68,21 +72,22 @@ Nest multiple panelGroups for more complex layouts
   </PanelGroup>
 </PanelGroup>
 ```
-<br/>
-**Defined panel sizes:**<br/>
+
+### Defined panel sizes
+
 Providing panelWidths with an array of objects defining each panel's size parameters will set the initial sizing for each panel.  If any property is missing, it will resort to the default for that property.
+
 ```jsx
 <PanelGroup panelWidths={[
-	{size: 100, minSize:50, resize: "dynamic"},
-    {minSize:100, resize: "stretch"},
-    {size: 100, minSize:50, resize: "dynamic"}
+  {size: 100, minSize:50, resize: "dynamic"},
+  {minSize:100, resize: "stretch"},
+  {size: 100, minSize:50, resize: "dynamic"}
 ]}>
-	<div>panel 1</div>
-    <div>panel 2</div>
-    <div>panel 3</div>
+  <div>panel 1</div>
+  <div>panel 2</div>
+  <div>panel 3</div>
 </PanelGroup>
 ```
-<br/>
 
 ## Component Props
 
