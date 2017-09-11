@@ -230,22 +230,22 @@ var PanelGroup = React.createClass({
 
     // if we made the right panel too small
     if (panels[panelIndex+1].size < minsize) {
-      delta = minsize - panels[panelIndex+1].size;
+      let delta = minsize - panels[panelIndex+1].size;
 
       if (panelIndex+1 === panels.length-1)
-        resultDelta += this.resizePanel(panelIndex, -delta, panels);
+        resultDelta = this.resizePanel(panelIndex, -delta, panels);
       else
-        resultDelta += this.resizePanel(panelIndex+1, delta, panels);
+        resultDelta = this.resizePanel(panelIndex+1, delta, panels);
     };
 
     // if we made the right panel too big
     if (maxsize !== 0 && panels[panelIndex+1].size > maxsize) {
-      delta = panels[panelIndex+1].size - maxsize;
+      let delta = panels[panelIndex+1].size - maxsize;
 
       if (panelIndex+1 === panels.length-1)
-        resultDelta += this.resizePanel(panelIndex, delta, panels);
+        resultDelta = this.resizePanel(panelIndex, delta, panels);
       else
-        resultDelta += this.resizePanel(panelIndex+1, -delta, panels);
+        resultDelta = this.resizePanel(panelIndex+1, -delta, panels);
     };
 
     // return how much this panel actually resized
