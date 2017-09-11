@@ -19,6 +19,8 @@ Demo: [https://danfessler.github.io/react-panelgroup/](https://danfessler.github
    When a panel is resized beyond it's extents, it will begin to push or pull at it's neighbors recursively.
  * **Column & Row Orientations**  
    Supports vertical and horizontal orientations. Nest them together to produce grid-like layouts
+ * **Snap points**  
+   If supplied, panels can snap to pre-defined sizes
 
 ## Installation
 
@@ -107,6 +109,8 @@ Initial panel size. If panelWidth.resize is "fixed" or "dynamic" the size will b
 minimum size of panel in pixels.  Defaults to 48 <br/><br/>
 - `panelWidth.resize: [ "fixed" | "dynamic" | "stretch" ]`<br/>
 Sets the resize behavior of the panel.  Fixed cannot be resized. Defaults to "stretch" <br/><br/>
+- `panelWidth.snap: [snapPoint, ...]`<br/>
+An array of positions to snap to per panel <br/><br/>
 - `onUpdate: function()`<br/>
 Callback to recieve state updates from PanelGroup to allow controlling state externally.  Returns an array of panelWidths <br/><br/>
 
