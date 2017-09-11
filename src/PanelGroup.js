@@ -70,11 +70,12 @@ var PanelGroup = React.createClass({
             minSize: props.panelWidths[i].minSize !== null ? props.panelWidths[i].minSize : defaultMinSize,
             resize:  props.panelWidths[i].resize? props.panelWidths[i].resize :
                      props.panelWidths[i].size? "dynamic" : defaultResize,
+            snap:    props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : []
           }
           panels.push(widthObj);
         } else {
           // default values if no props are given
-          panels.push({size: defaultSize, resize: defaultResize, minSize: defaultMinSize})
+          panels.push({size: defaultSize, resize: defaultResize, minSize: defaultMinSize, snap:[]})
         }
 
         // if none of the panels included was stretchy, make the last one stretchy
@@ -247,6 +248,36 @@ var PanelGroup = React.createClass({
       else
         resultDelta = this.resizePanel(panelIndex+1, -delta, panels);
     };
+
+    // Iterate through left panel's snap positions
+    for (let i=0; i<panels[panelIndex].snap.length; i++) {
+      if (Math.abs(panels[panelIndex].snap[i] - panels[panelIndex].size) < 20) {
+
+        let delta = panels[panelIndex].snap[i] - panels[panelIndex].size;
+
+        if (
+          delta !== 0 &&
+          panels[panelIndex].size  +  delta >= this.getPanelMinSize(panelIndex, panels) &&
+          panels[panelIndex+1].size - delta >= this.getPanelMinSize(panelIndex+1, panels)
+        )
+          resultDelta = this.resizePanel(panelIndex, delta, panels);
+      }
+    }
+
+    // Iterate through right panel's snap positions
+    for (let i=0; i<panels[panelIndex+1].snap.length; i++) {
+      if (Math.abs(panels[panelIndex+1].snap[i] - panels[panelIndex+1].size) < 20) {
+
+        let delta = panels[panelIndex+1].snap[i] - panels[panelIndex+1].size;
+
+        if (
+          delta !== 0 &&
+          panels[panelIndex].size  +  delta >= this.getPanelMinSize(panelIndex, panels) &&
+          panels[panelIndex+1].size - delta >= this.getPanelMinSize(panelIndex+1, panels)
+        )
+          resultDelta = this.resizePanel(panelIndex, -delta, panels);
+      }
+    }
 
     // return how much this panel actually resized
     return resultDelta;
@@ -433,17 +464,35 @@ var Divider = React.createClass({
   onMouseMove: function (e) {
     if (!this.state.dragging) return
 
+    let initDelta = {
+      x: e.pageX - this.state.initPos.x,
+      y: e.pageY - this.state.initPos.y
+    }
+
+    let flowMask = {
+      x: (this.props.direction === "row"    ? 1 : 0),
+      y: (this.props.direction === "column" ? 1 : 0)
+    }
+
+    let flowDelta = (initDelta.x * flowMask.x) + (initDelta.y * flowMask.y);
+
+    // Resize the panels
     var resultDelta = this.handleResize(
       this.props.panelID,
-      {x: e.pageX - this.state.initPos.x, y: e.pageY - this.state.initPos.y}
+      initDelta
     );
 
-    // if we've resized the panel like intended, reset the initPos
-    if (resultDelta !== 0) {
+    // if the divider moved, reset the initPos
+    if (resultDelta + flowDelta !== 0) {
+
+      // Did we move the expected amount? (snapping will result in a larger delta)
+      let expectedDelta = (resultDelta === flowDelta);
+
       this.setState({
         initPos: {
-          x: e.pageX,
-          y: e.pageY
+          // if we moved more than expected, add the difference to the Position
+          x: e.pageX + (expectedDelta? 0 : resultDelta * flowMask.x),
+          y: e.pageY + (expectedDelta? 0 : resultDelta * flowMask.y)
         },
       })
     }
