@@ -97,6 +97,18 @@ var PanelGroup = React.createClass({
     }
   },
 
+  onStartResizing: function(panels) {
+    if (this.props.onStartResizing) {
+      this.props.onStartResizing()
+    }
+  },
+
+  onStopResizing: function(panels) {
+    if (this.props.onStopResizing) {
+      this.props.onStopResizing()
+    }
+  },
+
   // For styling, track which direction to apply sizing to
   getSizeDirection: function(caps) {
     if (caps)
@@ -168,7 +180,17 @@ var PanelGroup = React.createClass({
 
       // add a handle between panels
       if (i < initialChildren.length-1) {
-        newChildren.push(<Divider borderColor={this.props.borderColor} key={"divider"+i} panelID={i} handleResize={this.handleResize} dividerWidth={this.props.spacing} direction={this.props.direction} showHandles={this.props.showHandles}/>);
+        newChildren.push(<Divider
+          borderColor={this.props.borderColor}
+          key={"divider"+i}
+          panelID={i}
+          handleResize={this.handleResize}
+          dividerWidth={this.props.spacing}
+          direction={this.props.direction}
+          showHandles={this.props.showHandles}
+          onStartResizing={this.onStartResizing}
+          onStopResizing={this.onStopResizing}
+        />);
       }
     }
 
@@ -429,9 +451,11 @@ var Divider = React.createClass({
     if (this.state.dragging && !state.dragging) {
       document.addEventListener('mousemove', this.onMouseMove)
       document.addEventListener('mouseup', this.onMouseUp)
+      this.props.onStartResizing()
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener('mousemove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
+      this.props.onStopResizing()
     }
   },
 

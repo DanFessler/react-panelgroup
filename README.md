@@ -113,6 +113,10 @@ Sets the resize behavior of the panel.  Fixed cannot be resized. Defaults to "st
 An array of positions to snap to per panel <br/><br/>
 - `onUpdate: function()`<br/>
 Callback to recieve state updates from PanelGroup to allow controlling state externally.  Returns an array of panelWidths <br/><br/>
+- `onStartResizing: function()`<br/>
+Callback called when the mouse button is pressed on the border between any panels <br/><br/>
+- `onStopResizing: function()`<br/>
+Callback called when the mouse button is released from the border between any panels <br/><br/>
 
 
 ## Contribute
