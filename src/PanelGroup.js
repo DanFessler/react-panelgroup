@@ -535,7 +535,7 @@ var Divider = React.createClass({
         left:   this.props.direction === "row"    ? this.getHandleOffset() : 0,
         top:    this.props.direction === "column" ? this.getHandleOffset() : 0,
         backgroundColor: this.props.showHandles? "rgba(0,128,255,0.25)" : "auto",
-        cursor: this.props.direction === "row" ? "ew-resize" : "ns-resize",
+        cursor: this.props.direction === "row" ? "col-resize" : "row-resize",
         zIndex: 100,
       }
     }
