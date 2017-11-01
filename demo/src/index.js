@@ -42,7 +42,7 @@ var code4 =
   <Content>panel 3</Content>
 </PanelGroup>`;
 
-let Demo = React.createClass({
+class Demo extends React.Component {
   render() {
     var containerStyle = {
       width: 640,
@@ -112,7 +112,7 @@ let Demo = React.createClass({
       </div>
     )
   }
-})
+}
 
 let DefaultLayout = function(props) {
   return (
