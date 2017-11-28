@@ -183,6 +183,20 @@ class PanelGroup extends React.Component {
   // if we've exceeded the target panel's extents
   resizePanel = (panelIndex, delta, panels) => {
 
+    // 1) first let's calculate and make sure all the sizes add up to be correct.
+    let masterSize = 0
+    for (let iti = 0; iti < panels.length; iti += 1) {
+      masterSize += panels[iti].size
+    }
+    let boundingRect =  ReactDOM.findDOMNode(this).getBoundingClientRect();
+    let boundingSize = (this.props.direction == "column" ? boundingRect.height : boundingRect.width) - (this.props.spacing * (this.props.children.length - 1))
+    if (masterSize != boundingSize) {
+      console.log(panels[0], panels[1])
+      console.log("ERROR! SIZES DON'T MATCH!: ", masterSize, boundingSize)
+      // 2) Rectify the situation by adding all the unacounted for space to the first panel
+      panels[panelIndex].size += boundingSize - masterSize
+    }
+
     var minsize; var maxsize;
 
     // track the progressive delta so we can report back how much this panel
