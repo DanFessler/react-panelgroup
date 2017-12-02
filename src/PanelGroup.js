@@ -569,8 +569,14 @@ class Divider extends React.Component {
     }
     Object.assign(style.divider, {backgroundColor: this.props.borderColor});
 
+    // Add custom class if dragging
+    var className = "divider";
+    if (this.state.dragging) {
+      className += " dragging";
+    }
+
     return (
-      <div className="divider" style={style.divider} onMouseDown={this.onMouseDown}>
+      <div className={className} style={style.divider} onMouseDown={this.onMouseDown}>
         <div style={style.handle}></div>
       </div>
     );
