@@ -183,6 +183,20 @@ class PanelGroup extends React.Component {
   // if we've exceeded the target panel's extents
   resizePanel = (panelIndex, delta, panels) => {
 
+    // 1) first let's calculate and make sure all the sizes add up to be correct.
+    let masterSize = 0
+    for (let iti = 0; iti < panels.length; iti += 1) {
+      masterSize += panels[iti].size
+    }
+    let boundingRect =  ReactDOM.findDOMNode(this).getBoundingClientRect();
+    let boundingSize = (this.props.direction == "column" ? boundingRect.height : boundingRect.width) - (this.props.spacing * (this.props.children.length - 1))
+    if (masterSize != boundingSize) {
+      console.log(panels[0], panels[1])
+      console.log("ERROR! SIZES DON'T MATCH!: ", masterSize, boundingSize)
+      // 2) Rectify the situation by adding all the unacounted for space to the first panel
+      panels[panelIndex].size += boundingSize - masterSize
+    }
+
     var minsize; var maxsize;
 
     // track the progressive delta so we can report back how much this panel
@@ -311,10 +325,30 @@ class PanelGroup extends React.Component {
   // Used to recalculate a stretchy panel when the window is resized
   setPanelSize = (panelIndex, size, callback) => {
     size = this.props.direction === "column"? size.y : size.x;
-
     if (size !== this.state.panels[panelIndex].size){
       var tempPanels = this.state.panels;
-      tempPanels[panelIndex].size = size;
+      //make sure we can actually resize this panel this small
+      if (size < tempPanels[panelIndex].minSize) {
+        let diff = tempPanels[panelIndex].minSize - size
+        tempPanels[panelIndex].size = tempPanels[panelIndex].minSize
+
+        // 1) Find all of the dynamic panels that we can resize and
+        // decrease them until the difference is gone
+        for (let i = 0; i < tempPanels.length; i = i + 1) {
+          if (i != panelIndex && tempPanels[i].resize === "dynamic") {
+            let available = tempPanels[i].size - tempPanels[i].minSize
+            let cut = Math.min(diff, available)
+            tempPanels[i].size = tempPanels[i].size - cut
+            // if the difference is gone then we are done!
+            diff = diff - cut
+            if (diff == 0) {
+              break
+            }
+          }
+        }
+      } else {
+        tempPanels[panelIndex].size = size
+      }
       this.setState({panels:tempPanels});
 
       if (panelIndex > 0) {
