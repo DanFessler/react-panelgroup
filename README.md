@@ -68,7 +68,7 @@ Nest multiple panelGroups for more complex layouts
     <div>panel 3</div>
   </PanelGroup>
   <div>panel 4</div>
-	<PanelGroup direction="column">
+  <PanelGroup direction="column">
     <div>panel 5</div>
     <div>panel 6</div>
   </PanelGroup>
