@@ -108,14 +108,13 @@ Initial panel size. If panelWidth.resize is "fixed" or "dynamic" the size will b
 - `panelWidth.minSize: number`<br/>
 minimum size of panel in pixels.  Defaults to 48 <br/><br/>
 - `panelWidth.maxSize: number`<br/>
-minimum size of panel in pixels.  Defaults to 0 (No Max Width) <br/><br/>
+maximum size of panel in pixels.  Defaults to 0 (No Max Width) <br/><br/>
 - `panelWidth.resize: [ "fixed" | "dynamic" | "stretch" ]`<br/>
 Sets the resize behavior of the panel.  Fixed cannot be resized. Defaults to "stretch" <br/><br/>
 - `panelWidth.snap: [snapPoint, ...]`<br/>
 An array of positions to snap to per panel <br/><br/>
 - `onUpdate: function(panels, isComplete)`<br/>
-Callback to recieve state updates from PanelGroup to allow controlling state externally.  Returns an array of panelWidths <br/><br/>
-
+Callback to recieve state updates from PanelGroup to allow controlling state externally.  Returns an array of panelWidths: `panels`, and a boolean value indicating if the PanelGroup resize is complete: `isComplete`. This second argument can be useful to avoid conflicts between external and internal state while resizing. <br/><br/>
 
 ## Contribute
 
