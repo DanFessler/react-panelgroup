@@ -452,28 +452,39 @@ class Divider extends React.Component {
     };
   }
 
+  componentDidMount () {
+    this.root.addEventListener('touchstart', this.onMouseDown, { passive: false })
+  }
+
   // Add/remove event listeners based on drag state
   componentDidUpdate (props, state) {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener('mousemove', this.onMouseMove)
+      document.addEventListener('touchmove', this.onMouseMove, { passive: false })
       document.addEventListener('mouseup', this.onMouseUp)
+      document.addEventListener('touchend', this.onMouseUp, { passive: false })
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener('mousemove', this.onMouseMove)
+      document.removeEventListener('touchmove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
+      document.removeEventListener('touchend', this.onMouseUp)
     }
   }
 
   // Start drag state and set initial position
   onMouseDown = (e) => {
 
-    // only left mouse button
-    if (e.button !== 0) return
+    // only left mouse button on mouse click
+    if (e.type === 'mousedown' && e.button !== 0) return
+
+    const pageX = e.type === 'touchstart' ? parseInt(e.touches[0].pageX, 10) : e.pageX
+    const pageY = e.type === 'touchstart' ? parseInt(e.touches[0].pageY, 10) : e.pageY
 
     this.setState({
       dragging: true,
       initPos: {
-        x: e.pageX,
-        y: e.pageY
+        x: pageX,
+        y: pageY
       },
     })
 
@@ -492,9 +503,12 @@ class Divider extends React.Component {
   onMouseMove = (e) => {
     if (!this.state.dragging) return
 
+    const pageX = e.type === 'touchmove' ? parseInt(e.touches[0].pageX, 10) : e.pageX
+    const pageY = e.type === 'touchmove' ? parseInt(e.touches[0].pageY, 10) : e.pageY
+
     let initDelta = {
-      x: e.pageX - this.state.initPos.x,
-      y: e.pageY - this.state.initPos.y
+      x: pageX - this.state.initPos.x,
+      y: pageY - this.state.initPos.y
     }
 
     let flowMask = {
@@ -519,8 +533,8 @@ class Divider extends React.Component {
       this.setState({
         initPos: {
           // if we moved more than expected, add the difference to the Position
-          x: e.pageX + (expectedDelta? 0 : resultDelta * flowMask.x),
-          y: e.pageY + (expectedDelta? 0 : resultDelta * flowMask.y)
+          x: pageX + (expectedDelta? 0 : resultDelta * flowMask.x),
+          y: pageY + (expectedDelta? 0 : resultDelta * flowMask.y)
         },
       })
     }
@@ -542,6 +556,10 @@ class Divider extends React.Component {
   getHandleOffset = () => {
     return (this.props.dividerWidth/2) - (this.getHandleWidth()/2);
   };
+
+  createRef = (ref) => {
+    this.root = ref
+  }
 
   // Render component
   render () {
@@ -576,7 +594,7 @@ class Divider extends React.Component {
     }
 
     return (
-      <div className={className} style={style.divider} onMouseDown={this.onMouseDown}>
+      <div className={className} ref={this.createRef} style={style.divider} onMouseDown={this.onMouseDown}>
         <div style={style.handle}></div>
       </div>
     );
