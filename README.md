@@ -123,6 +123,8 @@ Callback to recieve state updates from PanelGroup to allow controlling state ext
 ### Installation
 - Running `npm install` in the components's root directory will install everything you need for development.
 
+**NOTE** yarn does not work! It will yield phantomjs errors.
+
 ### Demo Development Server
 - `npm start` will run a development server with the component's demo app at [http://localhost:3000](http://localhost:3000) with hot module reloading.
 
