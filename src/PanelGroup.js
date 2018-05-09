@@ -152,7 +152,7 @@ export default class PanelGroup extends React.Component {
     return panelStyle;
   }
 
-  createPanel({ panelStyle, index, initialChildren }) {
+  createPanelProps({ panelStyle, index, initialChildren }) {
     const panelState = this.state.panels[index];
     let stretchIncluded = false;
     // give position info to children
@@ -169,13 +169,17 @@ export default class PanelGroup extends React.Component {
     if (panelState.resize === 'stretch') stretchIncluded = true;
     if (!stretchIncluded && metadata.isLast) metadata.resize = 'stretch';
 
+    return {
+      style: panelStyle,
+      key: index,
+      panelID: index,
+      ...metadata
+    };
+  }
+
+  createPanel({ panelStyle, index, initialChildren }) {
     return (
-      <Panel
-        style={panelStyle}
-        key={`panel${index}`}
-        panelID={index}
-        {...metadata}
-      >
+      <Panel {...this.createPanelProps({ panelStyle, index, initialChildren })}>
         {initialChildren[index]}
       </Panel>
     );
