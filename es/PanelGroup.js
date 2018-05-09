@@ -1,5 +1,3 @@
-var _jsxFileName = '/Users/nem/code/nmccready/react-panelgroup/src/PanelGroup.js';
-
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -342,13 +340,7 @@ var PanelGroup = function (_React$Component) {
         style: panelStyle,
         key: 'panel' + index,
         panelID: index
-      }, metadata, {
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 173
-        },
-        __self: this
-      }),
+      }, metadata),
       initialChildren[index]
     );
   };
@@ -367,47 +359,9 @@ var PanelGroup = function (_React$Component) {
         handleResize: this.handleResize,
         dividerWidth: this.props.spacing,
         direction: this.props.direction,
-        showHandles: this.props.showHandles,
-        __source: {
-          fileName: _jsxFileName,
-          lineNumber: 188
-        },
-        __self: this
+        showHandles: this.props.showHandles
       }));
     }
-  };
-
-  PanelGroup.prototype.render = function render() {
-    var children = this.props.children;
-
-    // map children to be sub-children of Panel or CollapsePanel
-    // delegate onKeyDown event from here to CollapsePanels to react
-    // to keyboard events from the parent element
-    // subscribe / callback
-
-    var style = this.getStyle();
-
-    // lets build up a new children array with added resize borders
-    var initialChildren = React.Children.toArray(children);
-    var newChildren = [];
-
-    for (var i = 0; i < initialChildren.length; i++) {
-      var panelStyle = this.getPanelStyle(i);
-      var newPanel = this.createPanel({ panelStyle: panelStyle, index: i, initialChildren: initialChildren });
-      newChildren.push(newPanel);
-      this.maybeDivide({ initialChildren: initialChildren, newChildren: newChildren, index: i });
-    }
-
-    return React.createElement(
-      'div',
-      { className: 'panelGroup', style: style.container, __source: {
-          fileName: _jsxFileName,
-          lineNumber: 222
-        },
-        __self: this
-      },
-      newChildren
-    );
   };
 
   // Entry point for resizing panels.
@@ -431,6 +385,30 @@ var PanelGroup = function (_React$Component) {
   // Hard-set a panel's size
   // Used to recalculate a stretchy panel when the window is resized
 
+
+  PanelGroup.prototype.render = function render() {
+    var children = this.props.children;
+
+
+    var style = this.getStyle();
+
+    // lets build up a new children array with added resize borders
+    var initialChildren = React.Children.toArray(children);
+    var newChildren = [];
+
+    for (var i = 0; i < initialChildren.length; i++) {
+      var panelStyle = this.getPanelStyle(i);
+      var newPanel = this.createPanel({ panelStyle: panelStyle, index: i, initialChildren: initialChildren });
+      newChildren.push(newPanel);
+      this.maybeDivide({ initialChildren: initialChildren, newChildren: newChildren, index: i });
+    }
+
+    return React.createElement(
+      'div',
+      { className: 'panelGroup', style: style.container },
+      newChildren
+    );
+  };
 
   return PanelGroup;
 }(React.Component);

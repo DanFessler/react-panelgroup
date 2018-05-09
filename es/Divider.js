@@ -1,5 +1,3 @@
-var _jsxFileName = '/Users/nem/code/nmccready/react-panelgroup/src/Divider.js';
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -159,18 +157,8 @@ var Divider = function (_React$Component) {
 
     return React.createElement(
       'div',
-      { className: className, style: style.divider, onMouseDown: this.onMouseDown, __source: {
-          fileName: _jsxFileName,
-          lineNumber: 139
-        },
-        __self: this
-      },
-      React.createElement('div', { style: style.handle, __source: {
-          fileName: _jsxFileName,
-          lineNumber: 140
-        },
-        __self: this
-      })
+      { className: className, style: style.divider, onMouseDown: this.onMouseDown },
+      React.createElement('div', { style: style.handle })
     );
   };
 

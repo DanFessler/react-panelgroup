@@ -1,5 +1,3 @@
-var _jsxFileName = '/Users/nem/code/nmccready/react-panelgroup/src/Panel.js';
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -76,21 +74,11 @@ var Panel = function (_React$Component) {
     };
 
     // only attach resize object if panel is stretchy.  Others dont need it
-    var resizeObject = this.props.resize === "stretch" ? React.createElement('object', { style: style.resizeObject, ref: 'resizeObject', type: 'text/html', __source: {
-        fileName: _jsxFileName,
-        lineNumber: 61
-      },
-      __self: this
-    }) : null;
+    var resizeObject = this.props.resize === "stretch" ? React.createElement('object', { style: style.resizeObject, ref: 'resizeObject', type: 'text/html' }) : null;
 
     return React.createElement(
       'div',
-      { className: 'panelWrapper', style: this.props.style, __source: {
-          fileName: _jsxFileName,
-          lineNumber: 64
-        },
-        __self: this
-      },
+      { className: 'panelWrapper', style: this.props.style },
       resizeObject,
       this.props.children
     );
