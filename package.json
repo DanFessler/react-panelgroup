@@ -20,7 +20,9 @@
     "test:watch": "nwb test --server",
     "deploy": "gh-pages -d demo/dist"
   },
-  "dependencies": {},
+  "dependencies": {
+    "debug-fabulous": "^1.1.0"
+  },
   "peerDependencies": {
     "react": "16.x || 15.x"
   },

@@ -31,7 +31,13 @@ var Panel = function (_React$Component) {
       if (_this.props.onWindowResize !== null) {
         var rect = ReactDOM.findDOMNode(_this).getBoundingClientRect();
 
-        _this.props.onWindowResize(_this.props.panelID, { x: rect.width, y: rect.height });
+        _this.props.onWindowResize(_this.props.panelID, { x: rect.width, y: rect.height }
+
+        // recalcalculate again if the width is below minimum
+        // Kinda hacky, but for large resizes like fullscreen/Restore
+        // it can't solve it in one pass.
+        // function() {this.onNextFrame(this.calculateStretchWidth)}.bind(this)
+        );
       }
     }, _temp), _possibleConstructorReturn(_this, _ret);
   }
@@ -71,10 +77,9 @@ var Panel = function (_React$Component) {
         zIndex: -1,
         opacity: 0
       }
-    };
 
-    // only attach resize object if panel is stretchy.  Others dont need it
-    var resizeObject = this.props.resize === "stretch" ? React.createElement('object', { style: style.resizeObject, ref: 'resizeObject', type: 'text/html' }) : null;
+      // only attach resize object if panel is stretchy.  Others dont need it
+    };var resizeObject = this.props.resize === "stretch" ? React.createElement('object', { style: style.resizeObject, ref: 'resizeObject', type: 'text/html' }) : null;
 
     return React.createElement(
       'div',

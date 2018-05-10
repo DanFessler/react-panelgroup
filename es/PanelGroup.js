@@ -10,8 +10,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Panel from './Panel';
 import Divider from './Divider';
+import Debug from '../debug';
 
 export { Divider, Panel };
+
+var debug = Debug.spawn('PanelGroup');
 
 var PanelGroup = function (_React$Component) {
   _inherits(PanelGroup, _React$Component);
@@ -89,8 +92,12 @@ var PanelGroup = function (_React$Component) {
       var boundingRect = ReactDOM.findDOMNode(_this).getBoundingClientRect();
       var boundingSize = (_this.props.direction == "column" ? boundingRect.height : boundingRect.width) - _this.props.spacing * (_this.props.children.length - 1);
       if (masterSize != boundingSize) {
-        console.log(panels[0], panels[1]);
-        console.log("ERROR! SIZES DON'T MATCH!: ", masterSize, boundingSize);
+        debug(function () {
+          return { panels: panels };
+        });
+        debug(function () {
+          return 'ERROR! SIZES DON\'T MATCH!: ' + masterSize + ', ' + boundingSize;
+        });
         // 2) Rectify the situation by adding all the unacounted for space to the first panel
         panels[panelIndex].size += boundingSize - masterSize;
       }
