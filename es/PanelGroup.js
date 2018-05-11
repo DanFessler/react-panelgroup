@@ -60,7 +60,8 @@ var PanelGroup = (_temp = _class = function (_React$Component) {
               size: props.panelWidths[i].size !== undefined ? props.panelWidths[i].size : defaultSize,
               minSize: props.panelWidths[i].minSize !== undefined ? props.panelWidths[i].minSize : defaultMinSize,
               resize: _this.defaultResize(props, i, defaultResize),
-              snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : []
+              snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : [],
+              style: props.panelWidths[i].style
             };
             panels.push(widthObj);
           } else {

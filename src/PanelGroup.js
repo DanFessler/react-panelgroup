@@ -92,7 +92,8 @@ export default class PanelGroup extends React.Component {
                 ? props.panelWidths[i].minSize
                 : defaultMinSize,
             resize: this.defaultResize(props, i, defaultResize),
-            snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : []
+            snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : [],
+            style: props.panelWidths[i].style
           };
           panels.push(widthObj);
         } else {
