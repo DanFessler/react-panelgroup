@@ -1,6 +1,6 @@
 {
   "name": "react-panelgroup",
-  "version": "1.0.6-5",
+  "version": "1.0.6-6",
   "description": "react-panelgroup React component",
   "main": "lib/index.js",
   "jsnext:main": "es/index.js",
