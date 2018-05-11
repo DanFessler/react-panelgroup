@@ -102,7 +102,8 @@ export default class PanelGroup extends React.Component {
             size: defaultSize,
             resize: defaultResize,
             minSize: defaultMinSize,
-            snap: []
+            snap: [],
+            style: {}
           });
         }
 
