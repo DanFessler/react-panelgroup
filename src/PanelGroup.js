@@ -155,10 +155,11 @@ export default class PanelGroup extends React.Component {
     const { direction, panelColor } = this.props;
 
     const panel = this.state.panels[index];
+    const { style } = panel;
 
     // setting up the style for this panel.  Should probably be handled
     // in the child component, but this was easier for now
-    let panelStyle = {
+    let newPanelStyle = {
       [this.getSizeDirection()]: panel.size,
       [direction === 'row' ? 'height' : 'width']: '100%',
       [`min${this.getSizeDirection(true)}`]: panel.resize === 'stretch' ? 0 : panel.size,
@@ -167,17 +168,18 @@ export default class PanelGroup extends React.Component {
       flexShrink: panel.resize === 'stretch' ? 1 : 0,
       display: 'flex',
       overflow: 'hidden',
-      position: 'relative'
+      position: 'relative',
+      ...style
     };
     if (panelColor !== null) {
       // patch in the background color if it was supplied as a prop
-      panelStyle = {
-        ...panelStyle,
+      newPanelStyle = {
+        ...newPanelStyle,
         backgroundColor: panelColor
       };
     }
 
-    return panelStyle;
+    return newPanelStyle;
   }
 
   createPanelProps({ panelStyle, index, initialChildren }) {
