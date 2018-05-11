@@ -70,7 +70,8 @@ var PanelGroup = (_temp = _class = function (_React$Component) {
               size: defaultSize,
               resize: defaultResize,
               minSize: defaultMinSize,
-              snap: []
+              snap: [],
+              style: {}
             });
           }
 
@@ -492,7 +493,7 @@ PanelGroup.propTypes = process.env.NODE_ENV !== "production" ? {
   spacing: PropTypes.number,
   direction: PropTypes.string,
   panelWidths: PropTypes.array,
-  children: PropTypes.object.isRequired,
+  children: PropTypes.array.isRequired,
   onUpdate: PropTypes.func,
   panelColor: PropTypes.string,
   borderColor: PropTypes.string,

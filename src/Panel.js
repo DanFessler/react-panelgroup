@@ -5,9 +5,9 @@ export default class Panel extends React.Component {
   static propTypes = {
     resize: PropTypes.string,
     onWindowResize: PropTypes.func,
-    panelID: PropTypes.string.isRequired,
+    panelID: PropTypes.number.isRequired,
     style: PropTypes.string.isRequired,
-    children: PropTypes.object.isRequired
+    children: PropTypes.array.isRequired
   };
 
   static defaultProps = {

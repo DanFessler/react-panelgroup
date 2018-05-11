@@ -6,7 +6,7 @@ export default class Divider extends React.Component {
     dividerWidth: PropTypes.number,
     handleBleed: PropTypes.number,
     direction: PropTypes.string,
-    panelID: PropTypes.string.isRequired,
+    panelID: PropTypes.number.isRequired,
     handleResize: PropTypes.func.isRequired,
     showHandles: PropTypes.bool,
     borderColor: PropTypes.string

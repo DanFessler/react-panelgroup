@@ -113,7 +113,7 @@ export { Panel as default };
 Panel.propTypes = process.env.NODE_ENV !== "production" ? {
   resize: PropTypes.string,
   onWindowResize: PropTypes.func,
-  panelID: PropTypes.string.isRequired,
+  panelID: PropTypes.number.isRequired,
   style: PropTypes.string.isRequired,
-  children: PropTypes.object.isRequired
+  children: PropTypes.array.isRequired
 } : {};
