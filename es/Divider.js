@@ -1,3 +1,5 @@
+var _class, _temp;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -5,18 +7,21 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 import React from 'react';
-import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
-var Divider = function (_React$Component) {
+var Divider = (_temp = _class = function (_React$Component) {
   _inherits(Divider, _React$Component);
 
   function Divider() {
     _classCallCheck(this, Divider);
 
-    var _this = _possibleConstructorReturn(this, _React$Component.apply(this, arguments));
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+      args[_key] = arguments[_key];
+    }
+
+    var _this = _possibleConstructorReturn(this, _React$Component.call.apply(_React$Component, [this].concat(args)));
 
     _this.onMouseDown = function (e) {
-
       // only left mouse button
       if (e.button !== 0) return;
 
@@ -47,8 +52,8 @@ var Divider = function (_React$Component) {
       };
 
       var flowMask = {
-        x: _this.props.direction === "row" ? 1 : 0,
-        y: _this.props.direction === "column" ? 1 : 0
+        x: _this.props.direction === 'row' ? 1 : 0,
+        y: _this.props.direction === 'column' ? 1 : 0
       };
 
       var flowDelta = initDelta.x * flowMask.x + initDelta.y * flowMask.y;
@@ -58,7 +63,6 @@ var Divider = function (_React$Component) {
 
       // if the divider moved, reset the initPos
       if (resultDelta + flowDelta !== 0) {
-
         // Did we move the expected amount? (snapping will result in a larger delta)
         var expectedDelta = resultDelta === flowDelta;
 
@@ -127,32 +131,32 @@ var Divider = function (_React$Component) {
   Divider.prototype.render = function render() {
     var style = {
       divider: {
-        width: this.props.direction === "row" ? this.props.dividerWidth : "auto",
-        minWidth: this.props.direction === "row" ? this.props.dividerWidth : "auto",
-        maxWidth: this.props.direction === "row" ? this.props.dividerWidth : "auto",
-        height: this.props.direction === "column" ? this.props.dividerWidth : "auto",
-        minHeight: this.props.direction === "column" ? this.props.dividerWidth : "auto",
-        maxHeight: this.props.direction === "column" ? this.props.dividerWidth : "auto",
+        width: this.props.direction === 'row' ? this.props.dividerWidth : 'auto',
+        minWidth: this.props.direction === 'row' ? this.props.dividerWidth : 'auto',
+        maxWidth: this.props.direction === 'row' ? this.props.dividerWidth : 'auto',
+        height: this.props.direction === 'column' ? this.props.dividerWidth : 'auto',
+        minHeight: this.props.direction === 'column' ? this.props.dividerWidth : 'auto',
+        maxHeight: this.props.direction === 'column' ? this.props.dividerWidth : 'auto',
         flexGrow: 0,
-        position: "relative"
+        position: 'relative'
       },
       handle: {
-        position: "absolute",
-        width: this.props.direction === "row" ? this.getHandleWidth() : "100%",
-        height: this.props.direction === "column" ? this.getHandleWidth() : "100%",
-        left: this.props.direction === "row" ? this.getHandleOffset() : 0,
-        top: this.props.direction === "column" ? this.getHandleOffset() : 0,
-        backgroundColor: this.props.showHandles ? "rgba(0,128,255,0.25)" : "auto",
-        cursor: this.props.direction === "row" ? "col-resize" : "row-resize",
+        position: 'absolute',
+        width: this.props.direction === 'row' ? this.getHandleWidth() : '100%',
+        height: this.props.direction === 'column' ? this.getHandleWidth() : '100%',
+        left: this.props.direction === 'row' ? this.getHandleOffset() : 0,
+        top: this.props.direction === 'column' ? this.getHandleOffset() : 0,
+        backgroundColor: this.props.showHandles ? 'rgba(0,128,255,0.25)' : 'auto',
+        cursor: this.props.direction === 'row' ? 'col-resize' : 'row-resize',
         zIndex: 100
       }
     };
     Object.assign(style.divider, { backgroundColor: this.props.borderColor });
 
     // Add custom class if dragging
-    var className = "divider";
+    var className = 'divider';
     if (this.state.dragging) {
-      className += " dragging";
+      className += ' dragging';
     }
 
     return React.createElement(
@@ -163,12 +167,20 @@ var Divider = function (_React$Component) {
   };
 
   return Divider;
-}(React.Component);
-
-export { Divider as default };
-
-
-Divider.defaultProps = {
+}(React.Component), _class.defaultProps = {
   dividerWidth: 1,
-  handleBleed: 4
-};
+  handleBleed: 4,
+  direction: undefined,
+  showHandles: false,
+  borderColor: undefined
+}, _temp);
+export { Divider as default };
+Divider.propTypes = process.env.NODE_ENV !== "production" ? {
+  dividerWidth: PropTypes.number,
+  handleBleed: PropTypes.number,
+  direction: PropTypes.string,
+  panelID: PropTypes.string.isRequired,
+  handleResize: PropTypes.func.isRequired,
+  showHandles: PropTypes.bool,
+  borderColor: PropTypes.string
+} : {};

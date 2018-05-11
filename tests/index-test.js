@@ -1,23 +1,23 @@
-import expect from 'expect'
-import React from 'react'
-import {render, unmountComponentAtNode} from 'react-dom'
+import expect from 'expect';
+import React from 'react';
+import { render, unmountComponentAtNode } from 'react-dom';
 
-import Component from 'src/PanelGroup'
+import Component from 'src';
 
 describe('Component', () => {
-  let node
+  let node;
 
   beforeEach(() => {
-    node = document.createElement('div')
-  })
+    node = document.createElement('div');
+  });
 
   afterEach(() => {
-    unmountComponentAtNode(node)
-  })
+    unmountComponentAtNode(node);
+  });
 
   it('PanelGroup renders', () => {
-    render(<Component/>, node, () => {
-      expect(node.innerHTML).toContain('')
-    })
-  })
-})
+    render(<Component />, node, () => {
+      expect(node.innerHTML).toContain('');
+    });
+  });
+});
