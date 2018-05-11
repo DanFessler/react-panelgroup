@@ -4,7 +4,6 @@ module.exports = {
   env: {
     browser: true
   },
-  plugins: ['prettier'],
   rules: {
     'comma-dangle': 0,
     'no-param-reassign': 0, // comeback to this,
