@@ -24,7 +24,7 @@ export default class PanelGroup extends React.Component {
     spacing: PropTypes.number,
     direction: PropTypes.string,
     panelWidths: PropTypes.array,
-    children: PropTypes.array.isRequired,
+    children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
     onUpdate: PropTypes.func,
     panelColor: PropTypes.string,
     borderColor: PropTypes.string,

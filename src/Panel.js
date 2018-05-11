@@ -6,8 +6,8 @@ export default class Panel extends React.Component {
     resize: PropTypes.string,
     onWindowResize: PropTypes.func,
     panelID: PropTypes.number.isRequired,
-    style: PropTypes.string.isRequired,
-    children: PropTypes.array.isRequired
+    style: PropTypes.object.isRequired,
+    children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired
   };
 
   static defaultProps = {
@@ -26,7 +26,8 @@ export default class Panel extends React.Component {
   // Attach resize event listener to resizeObject
   onResizeObjectLoad = () => {
     this.refs.resizeObject.contentDocument.defaultView.addEventListener('resize', () =>
-      this.calculateStretchWidth());
+      this.calculateStretchWidth()
+    );
   };
 
   // Utility function to wait for next render before executing a function
