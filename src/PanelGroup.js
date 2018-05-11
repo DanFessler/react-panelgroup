@@ -46,7 +46,8 @@ export default class PanelGroup extends React.Component {
       // if the panel array is a different size we know to update
       if (this.state.panels.length !== nextPanels.length) {
         this.setState(this.loadPanels(nextProps));
-      } else { // otherwise we need to iterate to spot any difference
+      } else {
+        // otherwise we need to iterate to spot any difference
         for (let i = 0; i < nextPanels.length; i++) {
           if (
             this.state.panels[i].size !== nextPanels[i].size ||
@@ -393,7 +394,11 @@ export default class PanelGroup extends React.Component {
 
   // Hard-set a panel's size
   // Used to recalculate a stretchy panel when the window is resized
-  setPanelSize = (panelIndex, size, callback) => {
+  setPanelSize = (panelIndex, size, callback, node) => {
+    if (!this.node && node) {
+      // due to timing child elements may have parent node first!
+      this.node = node;
+    }
     size = this.props.direction === 'column' ? size.y : size.x;
     if (size !== this.state.panels[panelIndex].size) {
       const tempPanels = this.state.panels;

@@ -43,8 +43,9 @@ export default class Panel extends React.Component {
 
       this.props.onWindowResize(
         this.props.panelID,
-        { x: rect.width, y: rect.height }
-
+        { x: rect.width, y: rect.height },
+        undefined,
+        this.node.parentElement
         // recalcalculate again if the width is below minimum
         // Kinda hacky, but for large resizes like fullscreen/Restore
         // it can't solve it in one pass.
