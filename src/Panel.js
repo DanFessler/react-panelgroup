@@ -42,9 +42,7 @@ export default class Panel extends React.Component {
     }
   };
 
-  // Render component
-  render () {
-
+  createResizeObject(){
     var style = {
       resizeObject: {
         position: "absolute",
@@ -58,7 +56,12 @@ export default class Panel extends React.Component {
     }
 
     // only attach resize object if panel is stretchy.  Others dont need it
-    const resizeObject = this.props.resize === "stretch" ? <object style={style.resizeObject} ref="resizeObject" type="text/html"></object> : null;
+    return this.props.resize === "stretch" ? <object style={style.resizeObject} ref="resizeObject" type="text/html"></object> : null;
+  }
+
+  // Render component
+  render () {
+    const resizeObject = this.createResizeObject();
 
     return (
       <div className="panelWrapper" style={this.props.style}>
