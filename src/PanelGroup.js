@@ -90,6 +90,19 @@ class PanelGroup extends React.Component {
     }
   };
 
+  onResizeStart = () => {
+    if (this.props.onResizeStart) {
+      // actually this slice clones only array, underlying objects stays the same
+      this.props.onResizeStart(this.state.panels.slice())
+    }
+  }
+
+  onResizeEnd = () => {
+    if (this.props.onResizeEnd) {
+      this.props.onResizeEnd(this.state.panels.slice())
+    }
+  }
+
   // For styling, track which direction to apply sizing to
   getSizeDirection = (caps) => {
     if (caps)
@@ -161,7 +174,17 @@ class PanelGroup extends React.Component {
 
       // add a handle between panels
       if (i < initialChildren.length-1) {
-        newChildren.push(<Divider borderColor={this.props.borderColor} key={"divider"+i} panelID={i} handleResize={this.handleResize} dividerWidth={this.props.spacing} direction={this.props.direction} showHandles={this.props.showHandles}/>);
+        newChildren.push(<Divider 
+          borderColor={this.props.borderColor}
+          key={"divider"+i}
+          panelID={i}
+          handleResize={this.handleResize}
+          dividerWidth={this.props.spacing}
+          direction={this.props.direction}
+          showHandles={this.props.showHandles}
+          onResizeStart={this.onResizeStart}
+          onResizeEnd={this.onResizeEnd}
+          />);
       }
     }
 
@@ -457,9 +480,12 @@ class Divider extends React.Component {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener('mousemove', this.onMouseMove)
       document.addEventListener('mouseup', this.onMouseUp)
+      // maybe move it to setState callback ?
+      this.props.onResizeStart();
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener('mousemove', this.onMouseMove)
       document.removeEventListener('mouseup', this.onMouseUp)
+      this.props.onResizeEnd();
     }
   }
 
