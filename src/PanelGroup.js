@@ -93,7 +93,11 @@ export default class PanelGroup extends React.Component {
                 : defaultMinSize,
             resize: this.defaultResize(props, i, defaultResize),
             snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : [],
-            style: props.panelWidths[i].style
+            style: {
+              // making the ability to not have to be so terse for style settings on panel
+              ...this.getPanelClass().defaultProps.style,
+              ...(props.panelWidths[i].style || {})
+            }
           };
           panels.push(widthObj);
         } else {
@@ -210,11 +214,17 @@ export default class PanelGroup extends React.Component {
   }
 
   createPanel({ panelStyle, index, initialChildren }) {
+    const Klass = this.getPanelClass();
     return (
-      <Panel {...this.createPanelProps({ panelStyle, index, initialChildren })}>
+      <Klass {...this.createPanelProps({ panelStyle, index, initialChildren })}>
         {initialChildren[index]}
-      </Panel>
+      </Klass>
     );
+  }
+  // eslint-disable-next-line class-methods-use-this
+  getPanelClass() {
+    // mainly for accessing default props of panels
+    return Panel;
   }
 
   maybeDivide({ initialChildren, newChildren, index }) {
