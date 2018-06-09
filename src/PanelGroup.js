@@ -412,7 +412,7 @@ class Panel extends React.Component {
         this.onResizeObjectLoad()
       );
       this.refs.resizeObject.data = "about:blank";
-      this.calculateStretchWidth();
+      this.onNextFrame(this.calculateStretchWidth);
     }
   }
 
