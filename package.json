@@ -1,16 +1,11 @@
 {
   "name": "react-panelgroup",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "react-panelgroup React component",
   "main": "lib/PanelGroup.js",
   "jsnext:main": "es/PanelGroup.js",
   "module": "es/PanelGroup.js",
-  "files": [
-    "css",
-    "es",
-    "lib",
-    "umd"
-  ],
+  "files": ["css", "es", "lib", "umd"],
   "scripts": {
     "build": "nwb build-react-component",
     "clean": "nwb clean-module && npm clean-demo",
@@ -34,7 +29,5 @@
   "homepage": "http://www.DanFessler.com",
   "license": "MIT",
   "repository": "https://github.com/DanFessler/react-panelgroup",
-  "keywords": [
-    "react-component"
-  ]
+  "keywords": ["react-component"]
 }
