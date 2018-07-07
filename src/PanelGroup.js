@@ -24,6 +24,7 @@ class PanelGroup extends React.Component {
           if (
             this.state.panels[i].size !== nextPanels[i].size ||
             this.state.panels[i].minSize !== nextPanels[i].minSize ||
+            this.state.panels[i].maxSize !== nextPanels[i].maxSize ||
             this.state.panels[i].resize !== nextPanels[i].resize
           ) {
             this.setState(this.loadPanels(nextProps));
@@ -42,6 +43,7 @@ class PanelGroup extends React.Component {
       // Default values if none were provided
       var defaultSize = 256;
       var defaultMinSize = 48;
+      var defaultMaxSize = 0;
       var defaultResize = "stretch";
 
       var stretchIncluded = false;
@@ -58,6 +60,10 @@ class PanelGroup extends React.Component {
               props.panelWidths[i].minSize !== undefined
                 ? props.panelWidths[i].minSize
                 : defaultMinSize,
+            maxSize: 
+              props.panelWidths[i].maxSize !== undefined
+                ? props.panelWidths[i].maxSize
+                : defaultMaxSize,
             resize: props.panelWidths[i].resize
               ? props.panelWidths[i].resize
               : props.panelWidths[i].size ? "dynamic" : defaultResize,
@@ -73,6 +79,7 @@ class PanelGroup extends React.Component {
             size: defaultSize,
             resize: defaultResize,
             minSize: defaultMinSize,
+            maxSize: defaultMaxSize,
             snap: []
           });
         }
@@ -343,7 +350,8 @@ class PanelGroup extends React.Component {
       }
       return panels[panelIndex].fixedSize;
     }
-    return 0;
+    return panels[panelIndex].maxSize;
+   // return 0;
   };
 
   // Utility function for getting min pixel size of the entire panel group
@@ -353,6 +361,15 @@ class PanelGroup extends React.Component {
       size += this.getPanelMinSize(i, this.state.panels);
     }
     return size + (this.state.panels.length - 1) * spacing;
+  };
+
+  // Utility function for getting max pixel size of the entire panel group
+  getPanelGroupMaxSize = (spacing) => {
+    var size = 0;
+    for (var i = 0; i < this.state.panels.length; i++) {
+      size += this.getPanelMaxSize(i, this.state.panels);
+    }
+    return size + ((this.state.panels.length-1) * spacing)
   };
 
   // Hard-set a panel's size
