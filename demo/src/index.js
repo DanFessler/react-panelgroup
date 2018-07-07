@@ -33,8 +33,8 @@ var code3 =
 
 var code4 =
 `<PanelGroup borderColor="grey" panelWidths={[
-  {size: 100, minSize:50, resize: "dynamic"},
-  {minSize:100, resize: "stretch"},
+  {size: 100, minSize:50, maxSize:225, resize: "dynamic"},
+  {maxSize:550, resize: "stretch"},
   {size: 100, minSize:50, resize: "dynamic"}
 ]}>
   <Content>panel 1</Content>
@@ -160,8 +160,8 @@ let NestedLayout = function(props) {
 let DefinedLayout = function(props) {
   return (
     <PanelGroup borderColor="#DDD" spacing={2} panelWidths={[
-      {size: 100, minSize:50, resize: "dynamic", snap: [100]},
-      {minSize:100, resize: "stretch", snap: [100]},
+      {size: 100, minSize:50, maxSize:225, resize: "dynamic", snap: [100]},
+      {maxSize:550, resize: "stretch", snap: [100]},
       {size: 100, minSize:50, resize: "dynamic", snap: [100]}
     ]}>
       <Content>panel 1</Content>
