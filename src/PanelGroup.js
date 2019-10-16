@@ -496,9 +496,13 @@ class Divider extends React.Component {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener("mousemove", this.onMouseMove);
       document.addEventListener("mouseup", this.onMouseUp);
+      document.addEventListener("touchend", this.onTouchEnd,{ passive:false });
+      document.addEventListener("touchmove", this.onTouchMove,{ passive:false });
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("mouseup", this.onMouseUp);
+      document.removeEventListener("touchend", this.onTouchEnd,{ passive:false });
+      document.removeEventListener("touchmove", this.onTouchMove,{ passive:false });
     }
   }
 
@@ -525,7 +529,7 @@ class Divider extends React.Component {
     e.stopPropagation();
     e.preventDefault();
   };
-
+  
   // Call resize handler if we're dragging
   onMouseMove = e => {
     if (!this.state.dragging) return;
@@ -562,7 +566,62 @@ class Divider extends React.Component {
     e.stopPropagation();
     e.preventDefault();
   };
+// Call resize on Touch events (mobile)
+  // Event ontouchstart
+  onTouchStart  = function (e) {
+    this.setState({
+      dragging: true,
+      initPos: {
+        x: e.touches[0].clientX,
+        y: e.touches[0].clientY
+      }
+    });
 
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  // Event ontouchend
+  onTouchEnd = function (e) {
+    this.setState({ dragging: false });
+    e.stopPropagation();
+    e.preventDefault();
+  };
+  // Event ontouchmove
+  onTouchMove = function (e) {
+    if (!this.state.dragging) return;
+
+    var initDelta = {
+      x: e.touches[0].clientX - this.state.initPos.x,
+      y: e.touches[0].clientY - this.state.initPos.y
+    };
+
+    var flowMask = {
+      x: _this4.props.direction === "row" ? 1 : 0,
+      y: _this4.props.direction === "column" ? 1 : 0
+    };
+
+    var flowDelta = initDelta.x * flowMask.x + initDelta.y * flowMask.y;
+
+    // Resize the panels
+    var resultDelta = this.handleResize(this.props.panelID, initDelta);
+
+    // if the divider moved, reset the initPos
+    if (resultDelta + flowDelta !== 0) {
+      // Did we move the expected amount? (snapping will result in a larger delta)
+      var expectedDelta = resultDelta === flowDelta;
+
+      this.setState({
+        initPos: {
+          // if we moved more than expected, add the difference to the Position
+          x: e.touches[0].clientX + (expectedDelta ? 0 : resultDelta * flowMask.x),
+          y: e.touches[0].clientY + (expectedDelta ? 0 : resultDelta * flowMask.y)
+        }
+      });
+    }
+
+    e.stopPropagation();
+    e.preventDefault();
+  };
   // Handle resizing
   handleResize = (i, delta) => {
     return this.props.handleResize(i, delta);
