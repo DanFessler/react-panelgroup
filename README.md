@@ -107,6 +107,8 @@ An array of panelWidth objects to initialize each panel with.  If a property is 
 Initial panel size. If panelWidth.resize is "fixed" or "dynamic" the size will be pixel units.  If panelWidth.resize is "stretch" then it is treated as a relative weight: Defaults to 256<br/><br/>
 - `panelWidth.minSize: number`<br/>
 minimum size of panel in pixels.  Defaults to 48 <br/><br/>
+- `panelWidth.maxSize: number`<br/>
+minimum size of panel in pixels.  Defaults to 0 (No Max Width) <br/><br/>
 - `panelWidth.resize: [ "fixed" | "dynamic" | "stretch" ]`<br/>
 Sets the resize behavior of the panel.  Fixed cannot be resized. Defaults to "stretch" <br/><br/>
 - `panelWidth.snap: [snapPoint, ...]`<br/>
