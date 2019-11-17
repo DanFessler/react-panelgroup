@@ -246,7 +246,7 @@ class PanelGroup extends React.Component {
         ? boundingRect.height
         : boundingRect.width) -
       this.props.spacing * (this.props.children.length - 1);
-    if (masterSize != boundingSize) {
+    if (Math.abs(boundingSize - masterSize) <= 0.01) {
       console.log(panels[0], panels[1]);
       console.log("ERROR! SIZES DON'T MATCH!: ", masterSize, boundingSize);
       // 2) Rectify the situation by adding all the unacounted for space to the first panel
