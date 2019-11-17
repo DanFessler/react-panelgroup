@@ -60,7 +60,9 @@ class PanelGroup extends React.Component {
                 : defaultMinSize,
             resize: props.panelWidths[i].resize
               ? props.panelWidths[i].resize
-              : props.panelWidths[i].size ? "dynamic" : defaultResize,
+              : props.panelWidths[i].size
+              ? "dynamic"
+              : defaultResize,
             snap:
               props.panelWidths[i].snap !== undefined
                 ? props.panelWidths[i].snap
@@ -495,27 +497,32 @@ class Divider extends React.Component {
   componentDidUpdate(props, state) {
     if (this.state.dragging && !state.dragging) {
       document.addEventListener("mousemove", this.onMouseMove);
-      document.addEventListener("mouseup", this.onMouseUp);
-      document.addEventListener("touchend", this.onTouchEnd,{ passive:false });
-      document.addEventListener("touchmove", this.onTouchMove,{ passive:false });
+      document.addEventListener("touchmove", this.onTouchMove, {
+        passive: false
+      });
+      document.addEventListener("mouseup", this.handleDragEnd);
+      document.addEventListener("touchend", this.handleDragEnd, {
+        passive: false
+      });
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener("mousemove", this.onMouseMove);
-      document.removeEventListener("mouseup", this.onMouseUp);
-      document.removeEventListener("touchend", this.onTouchEnd,{ passive:false });
-      document.removeEventListener("touchmove", this.onTouchMove,{ passive:false });
+      document.removeEventListener("touchmove", this.onTouchMove, {
+        passive: false
+      });
+      document.removeEventListener("mouseup", this.handleDragEnd);
+      document.removeEventListener("touchend", this.handleDragEnd, {
+        passive: false
+      });
     }
   }
 
   // Start drag state and set initial position
-  onMouseDown = e => {
-    // only left mouse button
-    if (e.button !== 0) return;
-
+  handleDragStart = (e, x, y) => {
     this.setState({
       dragging: true,
       initPos: {
-        x: e.pageX,
-        y: e.pageY
+        x: x,
+        y: y
       }
     });
 
@@ -524,19 +531,19 @@ class Divider extends React.Component {
   };
 
   // End drag state
-  onMouseUp = e => {
+  handleDragEnd = e => {
     this.setState({ dragging: false });
     e.stopPropagation();
     e.preventDefault();
   };
-  
+
   // Call resize handler if we're dragging
-  onMouseMove = e => {
+  handleDragMove = (e, x, y) => {
     if (!this.state.dragging) return;
 
     let initDelta = {
-      x: e.pageX - this.state.initPos.x,
-      y: e.pageY - this.state.initPos.y
+      x: x - this.state.initPos.x,
+      y: y - this.state.initPos.y
     };
 
     let flowMask = {
@@ -557,8 +564,8 @@ class Divider extends React.Component {
       this.setState({
         initPos: {
           // if we moved more than expected, add the difference to the Position
-          x: e.pageX + (expectedDelta ? 0 : resultDelta * flowMask.x),
-          y: e.pageY + (expectedDelta ? 0 : resultDelta * flowMask.y)
+          x: x + (expectedDelta ? 0 : resultDelta * flowMask.x),
+          y: y + (expectedDelta ? 0 : resultDelta * flowMask.y)
         }
       });
     }
@@ -566,62 +573,30 @@ class Divider extends React.Component {
     e.stopPropagation();
     e.preventDefault();
   };
-// Call resize on Touch events (mobile)
+
+  // Call resize on mouse events
+  // Event onMosueDown
+  onMouseDown = e => {
+    // only left mouse button
+    if (e.button !== 0) return;
+    this.handleDragStart(e, e.pageX, e.pageY);
+  };
+  // Event onMouseMove
+  onMouseMove = e => {
+    this.handleDragMove(e, e.pageX, e.pageY);
+  };
+
+  // Call resize on Touch events (mobile)
   // Event ontouchstart
-  onTouchStart  = function (e) {
-    this.setState({
-      dragging: true,
-      initPos: {
-        x: e.touches[0].clientX,
-        y: e.touches[0].clientY
-      }
-    });
+  onTouchStart = e => {
+    this.handleDragStart(e, e.touches[0].clientX, e.touches[0].clientY);
+  };
 
-    e.stopPropagation();
-    e.preventDefault();
-  };
-  // Event ontouchend
-  onTouchEnd = function (e) {
-    this.setState({ dragging: false });
-    e.stopPropagation();
-    e.preventDefault();
-  };
   // Event ontouchmove
-  onTouchMove = function (e) {
-    if (!this.state.dragging) return;
-
-    var initDelta = {
-      x: e.touches[0].clientX - this.state.initPos.x,
-      y: e.touches[0].clientY - this.state.initPos.y
-    };
-
-    var flowMask = {
-      x: _this4.props.direction === "row" ? 1 : 0,
-      y: _this4.props.direction === "column" ? 1 : 0
-    };
-
-    var flowDelta = initDelta.x * flowMask.x + initDelta.y * flowMask.y;
-
-    // Resize the panels
-    var resultDelta = this.handleResize(this.props.panelID, initDelta);
-
-    // if the divider moved, reset the initPos
-    if (resultDelta + flowDelta !== 0) {
-      // Did we move the expected amount? (snapping will result in a larger delta)
-      var expectedDelta = resultDelta === flowDelta;
-
-      this.setState({
-        initPos: {
-          // if we moved more than expected, add the difference to the Position
-          x: e.touches[0].clientX + (expectedDelta ? 0 : resultDelta * flowMask.x),
-          y: e.touches[0].clientY + (expectedDelta ? 0 : resultDelta * flowMask.y)
-        }
-      });
-    }
-
-    e.stopPropagation();
-    e.preventDefault();
+  onTouchMove = e => {
+    this.handleDragMove(e, e.touches[0].clientX, e.touches[0].clientY);
   };
+
   // Handle resizing
   handleResize = (i, delta) => {
     return this.props.handleResize(i, delta);
@@ -682,6 +657,7 @@ class Divider extends React.Component {
         className={className}
         style={style.divider}
         onMouseDown={this.onMouseDown}
+        onTouchStart={this.onTouchStart}
       >
         <div style={style.handle} />
       </div>
