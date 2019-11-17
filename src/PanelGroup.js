@@ -60,7 +60,7 @@ class PanelGroup extends React.Component {
               props.panelWidths[i].minSize !== undefined
                 ? props.panelWidths[i].minSize
                 : defaultMinSize,
-            maxSize: 
+            maxSize:
               props.panelWidths[i].maxSize !== undefined
                 ? props.panelWidths[i].maxSize
                 : defaultMaxSize,
@@ -103,6 +103,19 @@ class PanelGroup extends React.Component {
   onUpdate = panels => {
     if (this.props.onUpdate) {
       this.props.onUpdate(panels.slice());
+    }
+  };
+
+  onResizeStart = () => {
+    if (this.props.onResizeStart) {
+      // actually this slice clones only array, underlying objects stays the same
+      this.props.onResizeStart(this.state.panels.slice());
+    }
+  };
+
+  onResizeEnd = () => {
+    if (this.props.onResizeEnd) {
+      this.props.onResizeEnd(this.state.panels.slice());
     }
   };
 
@@ -190,6 +203,8 @@ class PanelGroup extends React.Component {
             dividerWidth={this.props.spacing}
             direction={this.props.direction}
             showHandles={this.props.showHandles}
+            onResizeStart={this.onResizeStart}
+            onResizeEnd={this.onResizeEnd}
           />
         );
       }
@@ -353,7 +368,7 @@ class PanelGroup extends React.Component {
       return panels[panelIndex].fixedSize;
     }
     return panels[panelIndex].maxSize;
-   // return 0;
+    // return 0;
   };
 
   // Utility function for getting min pixel size of the entire panel group
@@ -366,12 +381,12 @@ class PanelGroup extends React.Component {
   };
 
   // Utility function for getting max pixel size of the entire panel group
-  getPanelGroupMaxSize = (spacing) => {
+  getPanelGroupMaxSize = spacing => {
     var size = 0;
     for (var i = 0; i < this.state.panels.length; i++) {
       size += this.getPanelMaxSize(i, this.state.panels);
     }
-    return size + ((this.state.panels.length-1) * spacing)
+    return size + (this.state.panels.length - 1) * spacing;
   };
 
   // Hard-set a panel's size
@@ -521,6 +536,8 @@ class Divider extends React.Component {
       document.addEventListener("touchend", this.handleDragEnd, {
         passive: false
       });
+      // maybe move it to setState callback ?
+      this.props.onResizeStart();
     } else if (!this.state.dragging && state.dragging) {
       document.removeEventListener("mousemove", this.onMouseMove);
       document.removeEventListener("touchmove", this.onTouchMove, {
@@ -530,6 +547,7 @@ class Divider extends React.Component {
       document.removeEventListener("touchend", this.handleDragEnd, {
         passive: false
       });
+      this.props.onResizeEnd();
     }
   }
 
