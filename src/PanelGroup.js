@@ -52,6 +52,7 @@ export default class PanelGroup extends React.Component {
           if (
             this.state.panels[i].size !== nextPanels[i].size ||
             this.state.panels[i].minSize !== nextPanels[i].minSize ||
+            this.state.panels[i].maxSize !== nextPanels[i].maxSize ||
             this.state.panels[i].resize !== nextPanels[i].resize
           ) {
             this.setState(this.loadPanels(nextProps));
@@ -78,6 +79,7 @@ export default class PanelGroup extends React.Component {
       // Default values if none were provided
       const defaultSize = 256;
       const defaultMinSize = 48;
+      var defaultMaxSize = 0;
       const defaultResize = 'stretch';
 
       let stretchIncluded = false;
@@ -91,6 +93,10 @@ export default class PanelGroup extends React.Component {
               props.panelWidths[i].minSize !== undefined
                 ? props.panelWidths[i].minSize
                 : defaultMinSize,
+            maxSize:
+              props.panelWidths[i].maxSize !== undefined
+                ? props.panelWidths[i].maxSize
+                : defaultMaxSize,
             resize: this.defaultResize(props, i, defaultResize),
             snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : [],
             style: {
@@ -106,6 +112,7 @@ export default class PanelGroup extends React.Component {
             size: defaultSize,
             resize: defaultResize,
             minSize: defaultMinSize,
+            maxSize: defaultMaxSize,
             snap: [],
             style: {}
           });
@@ -124,9 +131,22 @@ export default class PanelGroup extends React.Component {
 
   // Pass internal state out if there's a callback for it
   // Useful for saving panel configuration
-  onUpdate = (panels) => {
+  onUpdate = panels => {
     if (this.props.onUpdate) {
       this.props.onUpdate(panels.slice());
+    }
+  };
+
+  onResizeStart = () => {
+    if (this.props.onResizeStart) {
+      // actually this slice clones only array, underlying objects stays the same
+      this.props.onResizeStart(this.state.panels.slice());
+    }
+  };
+
+  onResizeEnd = () => {
+    if (this.props.onResizeEnd) {
+      this.props.onResizeEnd(this.state.panels.slice());
     }
   };
 
@@ -239,6 +259,8 @@ export default class PanelGroup extends React.Component {
           dividerWidth={this.props.spacing}
           direction={this.props.direction}
           showHandles={this.props.showHandles}
+          onResizeStart={this.onResizeStart}
+          onResizeEnd={this.onResizeEnd}
         />
       );
     }
@@ -271,7 +293,7 @@ export default class PanelGroup extends React.Component {
     const boundingSize =
       (this.props.direction === 'column' ? boundingRect.height : boundingRect.width) -
       this.props.spacing * (this.props.children.length - 1);
-    if (masterSize !== boundingSize) {
+    if (Math.abs(boundingSize - masterSize) <= 0.01) {
       debug(() => ({ panels }));
       debug(() => `ERROR! SIZES DON'T MATCH!: ${masterSize}, ${boundingSize}`);
       // 2) Rectify the situation by adding all the unacounted for space to the first panel
@@ -394,14 +416,24 @@ export default class PanelGroup extends React.Component {
       }
       return panels[panelIndex].fixedSize;
     }
-    return 0;
+    return panels[panelIndex].maxSize;
+    // return 0;
   };
 
   // Utility function for getting min pixel size of the entire panel group
-  getPanelGroupMinSize = (spacing) => {
+  getPanelGroupMinSize = spacing => {
     let size = 0;
     for (let i = 0; i < this.state.panels.length; i++) {
       size += this.getPanelMinSize(i, this.state.panels);
+    }
+    return size + (this.state.panels.length - 1) * spacing;
+  };
+
+  // Utility function for getting max pixel size of the entire panel group
+  getPanelGroupMaxSize = spacing => {
+    let size = 0;
+    for (let i = 0; i < this.state.panels.length; i++) {
+      size += this.getPanelMaxSize(i, this.state.panels);
     }
     return size + (this.state.panels.length - 1) * spacing;
   };
@@ -500,7 +532,7 @@ export default class Panel extends React.Component {
     if (this.props.resize === 'stretch') {
       this.refs.resizeObject.addEventListener('load', () => this.onResizeObjectLoad());
       this.refs.resizeObject.data = 'about:blank';
-      this.calculateStretchWidth();
+      this.calculateStretchWidth(); // this.onNextFrame(this.calculateStretchWidth);
     }
   }
 
@@ -605,24 +637,36 @@ export default class Divider extends React.Component {
   // Add/remove event listeners based on drag state
   componentDidUpdate(props, state) {
     if (this.state.dragging && !state.dragging) {
-      document.addEventListener('mousemove', this.onMouseMove);
-      document.addEventListener('mouseup', this.onMouseUp);
+      document.addEventListener("mousemove", this.onMouseMove);
+      document.addEventListener("touchmove", this.onTouchMove, {
+        passive: false
+      });
+      document.addEventListener("mouseup", this.handleDragEnd);
+      document.addEventListener("touchend", this.handleDragEnd, {
+        passive: false
+      });
+      // maybe move it to setState callback ?
+      this.props.onResizeStart();
     } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener('mousemove', this.onMouseMove);
-      document.removeEventListener('mouseup', this.onMouseUp);
+      document.removeEventListener("mousemove", this.onMouseMove);
+      document.removeEventListener("touchmove", this.onTouchMove, {
+        passive: false
+      });
+      document.removeEventListener("mouseup", this.handleDragEnd);
+      document.removeEventListener("touchend", this.handleDragEnd, {
+        passive: false
+      });
+      this.props.onResizeEnd();
     }
   }
 
   // Start drag state and set initial position
-  onMouseDown = (e) => {
-    // only left mouse button
-    if (e.button !== 0) return;
-
+  handleDragStart = (e, x, y) => {
     this.setState({
       dragging: true,
       initPos: {
-        x: e.pageX,
-        y: e.pageY
+        x: x,
+        y: y
       }
     });
 
@@ -631,24 +675,24 @@ export default class Divider extends React.Component {
   };
 
   // End drag state
-  onMouseUp = (e) => {
+  handleDragEnd = e => {
     this.setState({ dragging: false });
     e.stopPropagation();
     e.preventDefault();
   };
 
   // Call resize handler if we're dragging
-  onMouseMove = (e) => {
+  handleDragMove = (e, x, y) => {
     if (!this.state.dragging) return;
 
     const initDelta = {
-      x: e.pageX - this.state.initPos.x,
-      y: e.pageY - this.state.initPos.y
+      x: x - this.state.initPos.x,
+      y: y - this.state.initPos.y
     };
 
     const flowMask = {
-      x: this.props.direction === 'row' ? 1 : 0,
-      y: this.props.direction === 'column' ? 1 : 0
+      x: this.props.direction === "row" ? 1 : 0,
+      y: this.props.direction === "column" ? 1 : 0
     };
 
     const flowDelta = initDelta.x * flowMask.x + initDelta.y * flowMask.y;
@@ -664,14 +708,37 @@ export default class Divider extends React.Component {
       this.setState({
         initPos: {
           // if we moved more than expected, add the difference to the Position
-          x: e.pageX + (expectedDelta ? 0 : resultDelta * flowMask.x),
-          y: e.pageY + (expectedDelta ? 0 : resultDelta * flowMask.y)
+          x: x + (expectedDelta ? 0 : resultDelta * flowMask.x),
+          y: y + (expectedDelta ? 0 : resultDelta * flowMask.y)
         }
       });
     }
 
     e.stopPropagation();
     e.preventDefault();
+  };
+
+  // Call resize on mouse events
+  // Event onMosueDown
+  onMouseDown = e => {
+    // only left mouse button
+    if (e.button !== 0) return;
+    this.handleDragStart(e, e.pageX, e.pageY);
+  };
+  // Event onMouseMove
+  onMouseMove = e => {
+    this.handleDragMove(e, e.pageX, e.pageY);
+  };
+
+  // Call resize on Touch events (mobile)
+  // Event ontouchstart
+  onTouchStart = e => {
+    this.handleDragStart(e, e.touches[0].clientX, e.touches[0].clientY);
+  };
+
+  // Event ontouchmove
+  onTouchMove = e => {
+    this.handleDragMove(e, e.touches[0].clientX, e.touches[0].clientY);
   };
 
   // Handle resizing
@@ -715,7 +782,12 @@ export default class Divider extends React.Component {
     }
 
     return (
-      <div className={className} style={style.divider} onMouseDown={this.onMouseDown}>
+      <div
+        className={className}
+        style={style.divider}
+        onMouseDown={this.onMouseDown}
+        onTouchStart={this.onTouchStart}
+      >
         <div style={style.handle} />
       </div>
     );
