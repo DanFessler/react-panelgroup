@@ -15,6 +15,8 @@ export default class PanelGroup extends React.Component {
     direction: 'row',
     panelWidths: [],
     onUpdate: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined,
     panelColor: undefined,
     borderColor: undefined,
     showHandles: false
@@ -26,6 +28,8 @@ export default class PanelGroup extends React.Component {
     panelWidths: PropTypes.array,
     children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
     onUpdate: PropTypes.func,
+    onResizeStart: PropTypes.func,
+    onResizeEnd: PropTypes.func,
     panelColor: PropTypes.string,
     borderColor: PropTypes.string,
     showHandles: PropTypes.bool
