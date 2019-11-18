@@ -19,7 +19,7 @@ export default class Panel extends React.Component {
     if (this.props.resize === 'stretch') {
       this.refs.resizeObject.addEventListener('load', () => this.onResizeObjectLoad());
       this.refs.resizeObject.data = 'about:blank';
-      this.calculateStretchWidth();
+      this.calculateStretchWidth(); // this.onNextFrame(this.calculateStretchWidth);
     }
   }
 
