@@ -2,26 +2,41 @@
   "name": "react-panelgroup",
   "version": "1.0.7",
   "description": "react-panelgroup React component",
-  "main": "lib/PanelGroup.js",
-  "jsnext:main": "es/PanelGroup.js",
-  "module": "es/PanelGroup.js",
-  "files": ["css", "es", "lib", "umd"],
+  "main": "lib/index.js",
+  "jsnext:main": "es/index.js",
+  "module": "es/index.js",
+  "files": [
+    "css",
+    "es",
+    "lib",
+    "umd"
+  ],
   "scripts": {
     "build": "nwb build-react-component",
     "clean": "nwb clean-module && npm clean-demo",
     "start": "nwb serve-react-demo",
-    "test": "nwb test",
+    "test": "npm run lint && nwb test",
     "test:coverage": "nwb test --coverage",
     "test:watch": "nwb test --server",
-    "deploy": "gh-pages -d demo/dist"
+    "deploy": "gh-pages -d demo/dist",
+    "lint": "eslint --quiet ./**/*.js"
   },
-  "dependencies": {},
+  "dependencies": {
+    "debug-fabulous": "^1.1.0",
+    "prop-types": "^15.6.1"
+  },
   "peerDependencies": {
     "react": "16.x || 15.x"
   },
   "devDependencies": {
+    "babel-eslint": "^8.2.3",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.11.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
     "gh-pages": "^0.11.0",
-    "nwb": "0.12.x",
+    "nwb": "0.22.x",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   },
@@ -29,5 +44,7 @@
   "homepage": "http://www.DanFessler.com",
   "license": "MIT",
   "repository": "https://github.com/DanFessler/react-panelgroup",
-  "keywords": ["react-component"]
+  "keywords": [
+    "react-component"
+  ]
 }

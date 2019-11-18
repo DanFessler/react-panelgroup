@@ -1,17 +1,45 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import React from 'react';
+import PropTypes from 'prop-types';
 
-class PanelGroup extends React.Component {
+import Panel from './Panel';
+import Divider from './Divider';
+import Debug from '../debug';
+
+export { Divider, Panel };
+
+const debug = Debug.spawn('PanelGroup');
+
+export default class PanelGroup extends React.Component {
+  static defaultProps = {
+    spacing: 1,
+    direction: 'row',
+    panelWidths: [],
+    onUpdate: undefined,
+    panelColor: undefined,
+    borderColor: undefined,
+    showHandles: false
+  };
+
+  static propTypes = {
+    spacing: PropTypes.number,
+    direction: PropTypes.string,
+    panelWidths: PropTypes.array,
+    children: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
+    onUpdate: PropTypes.func,
+    panelColor: PropTypes.string,
+    borderColor: PropTypes.string,
+    showHandles: PropTypes.bool
+  };
   // Load initial panel configuration from props
-  constructor() {
-    super(...arguments);
+  constructor(...args) {
+    super(...args);
 
     this.state = this.loadPanels(this.props);
   }
 
   // reload panel configuration if props update
   componentWillReceiveProps(nextProps) {
-    var nextPanels = nextProps.panelWidths;
+    const nextPanels = nextProps.panelWidths;
 
     // Only update from props if we're supplying the props in the first place
     if (nextPanels.length) {
@@ -20,7 +48,7 @@ class PanelGroup extends React.Component {
         this.setState(this.loadPanels(nextProps));
       } else {
         // otherwise we need to iterate to spot any difference
-        for (var i = 0; i < nextPanels.length; i++) {
+        for (let i = 0; i < nextPanels.length; i++) {
           if (
             this.state.panels[i].size !== nextPanels[i].size ||
             this.state.panels[i].minSize !== nextPanels[i].minSize ||
@@ -34,28 +62,33 @@ class PanelGroup extends React.Component {
       }
     }
   }
-
+  defaultResize = (props, index, defaultResize) => {
+    let resize = defaultResize;
+    if (props.panelWidths[index].resize) {
+      resize = props.panelWidths[index].resize; // eslint-disable-line
+    } else {
+      resize = props.panelWidths[index].size ? 'dynamic' : resize;
+    }
+    return resize;
+  };
   // load provided props into state
-  loadPanels = props => {
-    var panels = [];
+  loadPanels = (props) => {
+    const panels = [];
 
     if (props.children) {
       // Default values if none were provided
-      var defaultSize = 256;
-      var defaultMinSize = 48;
-      var defaultMaxSize = 0;
-      var defaultResize = "stretch";
+      const defaultSize = 256;
+      const defaultMinSize = 48;
+      const defaultMaxSize = 0;
+      const defaultResize = 'stretch';
 
-      var stretchIncluded = false;
-      var children = React.Children.toArray(props.children);
+      let stretchIncluded = false;
+      const children = React.Children.toArray(props.children);
 
-      for (var i = 0; i < children.length; i++) {
+      for (let i = 0; i < children.length; i++) {
         if (i < props.panelWidths.length && props.panelWidths[i]) {
-          var widthObj = {
-            size:
-              props.panelWidths[i].size !== undefined
-                ? props.panelWidths[i].size
-                : defaultSize,
+          const widthObj = {
+            size: props.panelWidths[i].size !== undefined ? props.panelWidths[i].size : defaultSize,
             minSize:
               props.panelWidths[i].minSize !== undefined
                 ? props.panelWidths[i].minSize
@@ -64,15 +97,13 @@ class PanelGroup extends React.Component {
               props.panelWidths[i].maxSize !== undefined
                 ? props.panelWidths[i].maxSize
                 : defaultMaxSize,
-            resize: props.panelWidths[i].resize
-              ? props.panelWidths[i].resize
-              : props.panelWidths[i].size
-              ? "dynamic"
-              : defaultResize,
-            snap:
-              props.panelWidths[i].snap !== undefined
-                ? props.panelWidths[i].snap
-                : []
+            resize: this.defaultResize(props, i, defaultResize),
+            snap: props.panelWidths[i].snap !== undefined ? props.panelWidths[i].snap : [],
+            style: {
+              // making the ability to not have to be so terse for style settings on panel
+              ...this.getPanelClass().defaultProps.style,
+              ...(props.panelWidths[i].style || {})
+            }
           };
           panels.push(widthObj);
         } else {
@@ -82,25 +113,25 @@ class PanelGroup extends React.Component {
             resize: defaultResize,
             minSize: defaultMinSize,
             maxSize: defaultMaxSize,
-            snap: []
+            snap: [],
+            style: {}
           });
         }
 
         // if none of the panels included was stretchy, make the last one stretchy
-        if (panels[i].resize === "stretch") stretchIncluded = true;
-        if (!stretchIncluded && i === children.length - 1)
-          panels[i].resize = "stretch";
+        if (panels[i].resize === 'stretch') stretchIncluded = true;
+        if (!stretchIncluded && i === children.length - 1) panels[i].resize = 'stretch';
       }
     }
 
     return {
-      panels: panels
+      panels
     };
   };
 
   // Pass internal state out if there's a callback for it
   // Useful for saving panel configuration
-  onUpdate = panels => {
+  onUpdate = (panels) => {
     if (this.props.onUpdate) {
       this.props.onUpdate(panels.slice());
     }
@@ -120,111 +151,129 @@ class PanelGroup extends React.Component {
   };
 
   // For styling, track which direction to apply sizing to
-  getSizeDirection = caps => {
-    if (caps) return this.props.direction === "column" ? "Height" : "Width";
-    else return this.props.direction === "column" ? "height" : "width";
+  getSizeDirection = (caps) => {
+    if (caps) {
+      return this.props.direction === 'column' ? 'Height' : 'Width';
+    }
+    return this.props.direction === 'column' ? 'height' : 'width';
   };
 
-  // Render component
-  render() {
-    var style = {
-      container: {
-        width: "100%",
-        height: "100%",
-        ["min" + this.getSizeDirection(true)]: this.getPanelGroupMinSize(
-          this.props.spacing
-        ),
-        display: "flex",
-        flexDirection: this.props.direction,
-        flexGrow: 1
-      },
-      panel: {
-        flexGrow: 0,
-        display: "flex"
-      }
+  getStyle() {
+    const container = {
+      width: '100%',
+      height: '100%',
+      [`min${this.getSizeDirection(true)}`]: this.getPanelGroupMinSize(this.props.spacing),
+      display: 'flex',
+      flexDirection: this.props.direction,
+      flexGrow: 1
     };
 
-    // lets build up a new children array with added resize borders
-    var initialChildren = React.Children.toArray(this.props.children);
-    var newChildren = [];
-    var stretchIncluded = false;
-
-    for (var i = 0; i < initialChildren.length; i++) {
-      // setting up the style for this panel.  Should probably be handled
-      // in the child component, but this was easier for now
-      var panelStyle = {
-        [this.getSizeDirection()]: this.state.panels[i].size,
-        [this.props.direction === "row" ? "height" : "width"]: "100%",
-        ["min" + this.getSizeDirection(true)]:
-          this.state.panels[i].resize === "stretch"
-            ? 0
-            : this.state.panels[i].size,
-
-        flexGrow: this.state.panels[i].resize === "stretch" ? 1 : 0,
-        flexShrink: this.state.panels[i].resize === "stretch" ? 1 : 0,
-        display: "flex",
-        overflow: "hidden",
-        position: "relative"
-      };
-
-      // patch in the background color if it was supplied as a prop
-      Object.assign(panelStyle, { backgroundColor: this.props.panelColor });
-
-      // give position info to children
-      var metadata = {
-        isFirst: i === 0 ? true : false,
-        isLast: i === initialChildren.length - 1 ? true : false,
-        resize: this.state.panels[i].resize,
-
-        // window resize handler if this panel is stretchy
-        onWindowResize:
-          this.state.panels[i].resize === "stretch" ? this.setPanelSize : null
-      };
-
-      // if none of the panels included was stretchy, make the last one stretchy
-      if (this.state.panels[i].resize === "stretch") stretchIncluded = true;
-      if (!stretchIncluded && metadata.isLast) metadata.resize = "stretch";
-
-      // push children with added metadata
-      newChildren.push(
-        <Panel style={panelStyle} key={"panel" + i} panelID={i} {...metadata}>
-          {initialChildren[i]}
-        </Panel>
-      );
-
-      // add a handle between panels
-      if (i < initialChildren.length - 1) {
-        newChildren.push(
-          <Divider
-            borderColor={this.props.borderColor}
-            key={"divider" + i}
-            panelID={i}
-            handleResize={this.handleResize}
-            dividerWidth={this.props.spacing}
-            direction={this.props.direction}
-            showHandles={this.props.showHandles}
-            onResizeStart={this.onResizeStart}
-            onResizeEnd={this.onResizeEnd}
-          />
-        );
+    return {
+      container,
+      panel: {
+        flexGrow: 0,
+        display: 'flex'
       }
+    };
+  }
+
+  getPanelStyle(index) {
+    const { direction, panelColor } = this.props;
+
+    const panel = this.state.panels[index];
+    const { style } = panel;
+
+    // setting up the style for this panel.  Should probably be handled
+    // in the child component, but this was easier for now
+    let newPanelStyle = {
+      [this.getSizeDirection()]: panel.size,
+      [direction === 'row' ? 'height' : 'width']: '100%',
+      [`min${this.getSizeDirection(true)}`]: panel.resize === 'stretch' ? 0 : panel.size,
+
+      flexGrow: panel.resize === 'stretch' ? 1 : 0,
+      flexShrink: panel.resize === 'stretch' ? 1 : 0,
+      display: 'flex',
+      overflow: 'hidden',
+      position: 'relative',
+      ...style
+    };
+    if (panelColor !== null) {
+      // patch in the background color if it was supplied as a prop
+      newPanelStyle = {
+        ...newPanelStyle,
+        backgroundColor: panelColor
+      };
     }
 
+    return newPanelStyle;
+  }
+
+  createPanelProps({ panelStyle, index, initialChildren }) {
+    const panelState = this.state.panels[index];
+    let stretchIncluded = false;
+    // give position info to children
+    const metadata = {
+      isFirst: index === 0,
+      isLast: index === initialChildren.length - 1,
+      resize: panelState.resize,
+
+      // window resize handler if this panel is stretchy
+      onWindowResize: panelState.resize === 'stretch' ? this.setPanelSize : null
+    };
+
+    // if none of the panels included was stretchy, make the last one stretchy
+    if (panelState.resize === 'stretch') stretchIncluded = true;
+    if (!stretchIncluded && metadata.isLast) metadata.resize = 'stretch';
+
+    return {
+      style: panelStyle,
+      key: index,
+      panelID: index,
+      ...metadata
+    };
+  }
+
+  createPanel({ panelStyle, index, initialChildren }) {
+    const Klass = this.getPanelClass();
     return (
-      <div className="panelGroup" style={style.container}>
-        {newChildren}
-      </div>
+      <Klass {...this.createPanelProps({ panelStyle, index, initialChildren })}>
+        {initialChildren[index]}
+      </Klass>
     );
+  }
+  // eslint-disable-next-line class-methods-use-this
+  getPanelClass() {
+    // mainly for accessing default props of panels
+    return Panel;
+  }
+
+  maybeDivide({ initialChildren, newChildren, index }) {
+    // add a handle between panels
+    if (index < initialChildren.length - 1) {
+      newChildren.push(
+        <Divider
+          borderColor={this.props.borderColor}
+          key={`divider${index}`}
+          panelID={index}
+          handleResize={this.handleResize}
+          dividerWidth={this.props.spacing}
+          direction={this.props.direction}
+          showHandles={this.props.showHandles}
+          onResizeStart={this.onResizeStart}
+          onResizeEnd={this.onResizeEnd}
+        />
+      );
+    }
   }
 
   // Entry point for resizing panels.
   // We clone the panel array and perform operations on it so we can
   // setState after the recursive operations are finished
   handleResize = (i, delta) => {
-    var tempPanels = this.state.panels.slice();
-    var returnDelta = this.resizePanel(
+    const tempPanels = this.state.panels.slice();
+    const returnDelta = this.resizePanel(
       i,
-      this.props.direction === "row" ? delta.x : delta.y,
+      this.props.direction === 'row' ? delta.x : delta.y,
       tempPanels
     );
     this.setState({ panels: tempPanels });
@@ -240,25 +289,23 @@ class PanelGroup extends React.Component {
     for (let iti = 0; iti < panels.length; iti += 1) {
       masterSize += panels[iti].size;
     }
-    let boundingRect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-    let boundingSize =
-      (this.props.direction == "column"
-        ? boundingRect.height
-        : boundingRect.width) -
+    const boundingRect = this.node.getBoundingClientRect();
+    const boundingSize =
+      (this.props.direction === 'column' ? boundingRect.height : boundingRect.width) -
       this.props.spacing * (this.props.children.length - 1);
     if (Math.abs(boundingSize - masterSize) <= 0.01) {
-      console.log(panels[0], panels[1]);
-      console.log("ERROR! SIZES DON'T MATCH!: ", masterSize, boundingSize);
+      debug(() => ({ panels }));
+      debug(() => `ERROR! SIZES DON'T MATCH!: ${masterSize}, ${boundingSize}`);
       // 2) Rectify the situation by adding all the unacounted for space to the first panel
       panels[panelIndex].size += boundingSize - masterSize;
     }
 
-    var minsize;
-    var maxsize;
+    let minsize;
+    let maxsize;
 
     // track the progressive delta so we can report back how much this panel
     // actually moved after all the adjustments have been made
-    var resultDelta = delta;
+    let resultDelta = delta;
 
     // make the changes and deal with the consequences later
     panels[panelIndex].size += delta;
@@ -270,20 +317,24 @@ class PanelGroup extends React.Component {
 
     // if we made the left panel too small
     if (panels[panelIndex].size < minsize) {
-      let delta = minsize - panels[panelIndex].size;
+      delta = minsize - panels[panelIndex].size;
 
-      if (panelIndex === 0)
+      if (panelIndex === 0) {
         resultDelta = this.resizePanel(panelIndex, delta, panels);
-      else resultDelta = this.resizePanel(panelIndex - 1, -delta, panels);
+      } else {
+        resultDelta = this.resizePanel(panelIndex - 1, -delta, panels);
+      }
     }
 
     // if we made the left panel too big
     if (maxsize !== 0 && panels[panelIndex].size > maxsize) {
-      let delta = panels[panelIndex].size - maxsize;
+      delta = panels[panelIndex].size - maxsize;
 
-      if (panelIndex === 0)
+      if (panelIndex === 0) {
         resultDelta = this.resizePanel(panelIndex, -delta, panels);
-      else resultDelta = this.resizePanel(panelIndex - 1, delta, panels);
+      } else {
+        resultDelta = this.resizePanel(panelIndex - 1, delta, panels);
+      }
     }
 
     // Min and max for RIGHT panel
@@ -292,55 +343,53 @@ class PanelGroup extends React.Component {
 
     // if we made the right panel too small
     if (panels[panelIndex + 1].size < minsize) {
-      let delta = minsize - panels[panelIndex + 1].size;
+      delta = minsize - panels[panelIndex + 1].size;
 
-      if (panelIndex + 1 === panels.length - 1)
+      if (panelIndex + 1 === panels.length - 1) {
         resultDelta = this.resizePanel(panelIndex, -delta, panels);
-      else resultDelta = this.resizePanel(panelIndex + 1, delta, panels);
+      } else {
+        resultDelta = this.resizePanel(panelIndex + 1, delta, panels);
+      }
     }
 
     // if we made the right panel too big
     if (maxsize !== 0 && panels[panelIndex + 1].size > maxsize) {
-      let delta = panels[panelIndex + 1].size - maxsize;
+      delta = panels[panelIndex + 1].size - maxsize;
 
-      if (panelIndex + 1 === panels.length - 1)
+      if (panelIndex + 1 === panels.length - 1) {
         resultDelta = this.resizePanel(panelIndex, delta, panels);
-      else resultDelta = this.resizePanel(panelIndex + 1, -delta, panels);
+      } else {
+        resultDelta = this.resizePanel(panelIndex + 1, -delta, panels);
+      }
     }
 
     // Iterate through left panel's snap positions
     for (let i = 0; i < panels[panelIndex].snap.length; i++) {
       if (Math.abs(panels[panelIndex].snap[i] - panels[panelIndex].size) < 20) {
-        let delta = panels[panelIndex].snap[i] - panels[panelIndex].size;
+        delta = panels[panelIndex].snap[i] - panels[panelIndex].size;
 
         if (
           delta !== 0 &&
-          panels[panelIndex].size + delta >=
-            this.getPanelMinSize(panelIndex, panels) &&
-          panels[panelIndex + 1].size - delta >=
-            this.getPanelMinSize(panelIndex + 1, panels)
-        )
+          panels[panelIndex].size + delta >= this.getPanelMinSize(panelIndex, panels) &&
+          panels[panelIndex + 1].size - delta >= this.getPanelMinSize(panelIndex + 1, panels)
+        ) {
           resultDelta = this.resizePanel(panelIndex, delta, panels);
+        }
       }
     }
 
     // Iterate through right panel's snap positions
     for (let i = 0; i < panels[panelIndex + 1].snap.length; i++) {
-      if (
-        Math.abs(panels[panelIndex + 1].snap[i] - panels[panelIndex + 1].size) <
-        20
-      ) {
-        let delta =
-          panels[panelIndex + 1].snap[i] - panels[panelIndex + 1].size;
+      if (Math.abs(panels[panelIndex + 1].snap[i] - panels[panelIndex + 1].size) < 20) {
+        delta = panels[panelIndex + 1].snap[i] - panels[panelIndex + 1].size;
 
         if (
           delta !== 0 &&
-          panels[panelIndex].size + delta >=
-            this.getPanelMinSize(panelIndex, panels) &&
-          panels[panelIndex + 1].size - delta >=
-            this.getPanelMinSize(panelIndex + 1, panels)
-        )
+          panels[panelIndex].size + delta >= this.getPanelMinSize(panelIndex, panels) &&
+          panels[panelIndex + 1].size - delta >= this.getPanelMinSize(panelIndex + 1, panels)
+        ) {
           resultDelta = this.resizePanel(panelIndex, -delta, panels);
+        }
       }
     }
 
@@ -350,7 +399,7 @@ class PanelGroup extends React.Component {
 
   // Utility function for getting min pixel size of panel
   getPanelMinSize = (panelIndex, panels) => {
-    if (panels[panelIndex].resize === "fixed") {
+    if (panels[panelIndex].resize === 'fixed') {
       if (!panels[panelIndex].fixedSize) {
         panels[panelIndex].fixedSize = panels[panelIndex].size;
       }
@@ -361,7 +410,7 @@ class PanelGroup extends React.Component {
 
   // Utility function for getting max pixel size of panel
   getPanelMaxSize = (panelIndex, panels) => {
-    if (panels[panelIndex].resize === "fixed") {
+    if (panels[panelIndex].resize === 'fixed') {
       if (!panels[panelIndex].fixedSize) {
         panels[panelIndex].fixedSize = panels[panelIndex].size;
       }
@@ -372,18 +421,18 @@ class PanelGroup extends React.Component {
   };
 
   // Utility function for getting min pixel size of the entire panel group
-  getPanelGroupMinSize = spacing => {
-    var size = 0;
-    for (var i = 0; i < this.state.panels.length; i++) {
+  getPanelGroupMinSize = (spacing) => {
+    let size = 0;
+    for (let i = 0; i < this.state.panels.length; i++) {
       size += this.getPanelMinSize(i, this.state.panels);
     }
     return size + (this.state.panels.length - 1) * spacing;
   };
 
   // Utility function for getting max pixel size of the entire panel group
-  getPanelGroupMaxSize = spacing => {
-    var size = 0;
-    for (var i = 0; i < this.state.panels.length; i++) {
+  getPanelGroupMaxSize = (spacing) => {
+    let size = 0;
+    for (let i = 0; i < this.state.panels.length; i++) {
       size += this.getPanelMaxSize(i, this.state.panels);
     }
     return size + (this.state.panels.length - 1) * spacing;
@@ -391,25 +440,29 @@ class PanelGroup extends React.Component {
 
   // Hard-set a panel's size
   // Used to recalculate a stretchy panel when the window is resized
-  setPanelSize = (panelIndex, size, callback) => {
-    size = this.props.direction === "column" ? size.y : size.x;
+  setPanelSize = (panelIndex, size, callback, node) => {
+    if (!this.node && node) {
+      // due to timing child elements may have parent node first!
+      this.node = node;
+    }
+    size = this.props.direction === 'column' ? size.y : size.x;
     if (size !== this.state.panels[panelIndex].size) {
-      var tempPanels = this.state.panels;
-      //make sure we can actually resize this panel this small
+      const tempPanels = this.state.panels;
+      // make sure we can actually resize this panel this small
       if (size < tempPanels[panelIndex].minSize) {
         let diff = tempPanels[panelIndex].minSize - size;
         tempPanels[panelIndex].size = tempPanels[panelIndex].minSize;
 
         // 1) Find all of the dynamic panels that we can resize and
         // decrease them until the difference is gone
-        for (let i = 0; i < tempPanels.length; i = i + 1) {
-          if (i != panelIndex && tempPanels[i].resize === "dynamic") {
-            let available = tempPanels[i].size - tempPanels[i].minSize;
-            let cut = Math.min(diff, available);
-            tempPanels[i].size = tempPanels[i].size - cut;
+        for (let i = 0; i < tempPanels.length; i += 1) {
+          if (i !== panelIndex && tempPanels[i].resize === 'dynamic') {
+            const available = tempPanels[i].size - tempPanels[i].minSize;
+            const cut = Math.min(diff, available);
+            tempPanels[i].size -= cut;
             // if the difference is gone then we are done!
-            diff = diff - cut;
-            if (diff == 0) {
+            diff -= cut;
+            if (diff === 0) {
               break;
             }
           }
@@ -430,279 +483,33 @@ class PanelGroup extends React.Component {
       }
     }
   };
-}
 
-PanelGroup.defaultProps = {
-  spacing: 1,
-  direction: "row",
-  panelWidths: []
-};
-
-class Panel extends React.Component {
-  // Find the resizeObject if it has one
-  componentDidMount() {
-    if (this.props.resize === "stretch") {
-      this.refs.resizeObject.addEventListener("load", () =>
-        this.onResizeObjectLoad()
-      );
-      this.refs.resizeObject.data = "about:blank";
-      this.onNextFrame(this.calculateStretchWidth);
-    }
-  }
-
-  // Attach resize event listener to resizeObject
-  onResizeObjectLoad = () => {
-    this.refs.resizeObject.contentDocument.defaultView.addEventListener(
-      "resize",
-      () => this.calculateStretchWidth()
-    );
-  };
-
-  // Utility function to wait for next render before executing a function
-  onNextFrame = callback => {
-    setTimeout(function() {
-      window.requestAnimationFrame(callback);
-    }, 0);
-  };
-
-  // Recalculate the stretchy panel if it's container has been resized
-  calculateStretchWidth = () => {
-    if (this.props.onWindowResize !== null) {
-      var rect = ReactDOM.findDOMNode(this).getBoundingClientRect();
-
-      this.props.onWindowResize(
-        this.props.panelID,
-        { x: rect.width, y: rect.height }
-
-        // recalcalculate again if the width is below minimum
-        // Kinda hacky, but for large resizes like fullscreen/Restore
-        // it can't solve it in one pass.
-        // function() {this.onNextFrame(this.calculateStretchWidth)}.bind(this)
-      );
-    }
-  };
-
-  // Render component
   render() {
-    var style = {
-      resizeObject: {
-        position: "absolute",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: -1,
-        opacity: 0
-      }
-    };
+    const { children } = this.props;
 
-    // only attach resize object if panel is stretchy.  Others dont need it
-    const resizeObject =
-      this.props.resize === "stretch" ? (
-        <object
-          style={style.resizeObject}
-          ref="resizeObject"
-          type="text/html"
-        />
-      ) : null;
+    const style = this.getStyle();
 
-    return (
-      <div className="panelWrapper" style={this.props.style}>
-        {resizeObject}
-        {this.props.children}
-      </div>
-    );
-  }
-}
+    // lets build up a new children array with added resize borders
+    const initialChildren = React.Children.toArray(children);
+    const newChildren = [];
 
-class Divider extends React.Component {
-  constructor() {
-    super(...arguments);
-
-    this.state = {
-      dragging: false,
-      initPos: { x: null, y: null }
-    };
-  }
-
-  // Add/remove event listeners based on drag state
-  componentDidUpdate(props, state) {
-    if (this.state.dragging && !state.dragging) {
-      document.addEventListener("mousemove", this.onMouseMove);
-      document.addEventListener("touchmove", this.onTouchMove, {
-        passive: false
-      });
-      document.addEventListener("mouseup", this.handleDragEnd);
-      document.addEventListener("touchend", this.handleDragEnd, {
-        passive: false
-      });
-      // maybe move it to setState callback ?
-      this.props.onResizeStart();
-    } else if (!this.state.dragging && state.dragging) {
-      document.removeEventListener("mousemove", this.onMouseMove);
-      document.removeEventListener("touchmove", this.onTouchMove, {
-        passive: false
-      });
-      document.removeEventListener("mouseup", this.handleDragEnd);
-      document.removeEventListener("touchend", this.handleDragEnd, {
-        passive: false
-      });
-      this.props.onResizeEnd();
-    }
-  }
-
-  // Start drag state and set initial position
-  handleDragStart = (e, x, y) => {
-    this.setState({
-      dragging: true,
-      initPos: {
-        x: x,
-        y: y
-      }
-    });
-
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
-  // End drag state
-  handleDragEnd = e => {
-    this.setState({ dragging: false });
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
-  // Call resize handler if we're dragging
-  handleDragMove = (e, x, y) => {
-    if (!this.state.dragging) return;
-
-    let initDelta = {
-      x: x - this.state.initPos.x,
-      y: y - this.state.initPos.y
-    };
-
-    let flowMask = {
-      x: this.props.direction === "row" ? 1 : 0,
-      y: this.props.direction === "column" ? 1 : 0
-    };
-
-    let flowDelta = initDelta.x * flowMask.x + initDelta.y * flowMask.y;
-
-    // Resize the panels
-    var resultDelta = this.handleResize(this.props.panelID, initDelta);
-
-    // if the divider moved, reset the initPos
-    if (resultDelta + flowDelta !== 0) {
-      // Did we move the expected amount? (snapping will result in a larger delta)
-      let expectedDelta = resultDelta === flowDelta;
-
-      this.setState({
-        initPos: {
-          // if we moved more than expected, add the difference to the Position
-          x: x + (expectedDelta ? 0 : resultDelta * flowMask.x),
-          y: y + (expectedDelta ? 0 : resultDelta * flowMask.y)
-        }
-      });
-    }
-
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
-  // Call resize on mouse events
-  // Event onMosueDown
-  onMouseDown = e => {
-    // only left mouse button
-    if (e.button !== 0) return;
-    this.handleDragStart(e, e.pageX, e.pageY);
-  };
-  // Event onMouseMove
-  onMouseMove = e => {
-    this.handleDragMove(e, e.pageX, e.pageY);
-  };
-
-  // Call resize on Touch events (mobile)
-  // Event ontouchstart
-  onTouchStart = e => {
-    this.handleDragStart(e, e.touches[0].clientX, e.touches[0].clientY);
-  };
-
-  // Event ontouchmove
-  onTouchMove = e => {
-    this.handleDragMove(e, e.touches[0].clientX, e.touches[0].clientY);
-  };
-
-  // Handle resizing
-  handleResize = (i, delta) => {
-    return this.props.handleResize(i, delta);
-  };
-
-  // Utility functions for handle size provided how much bleed
-  // we want outside of the actual divider div
-  getHandleWidth = () => {
-    return this.props.dividerWidth + this.props.handleBleed * 2;
-  };
-  getHandleOffset = () => {
-    return this.props.dividerWidth / 2 - this.getHandleWidth() / 2;
-  };
-
-  // Render component
-  render() {
-    var style = {
-      divider: {
-        width:
-          this.props.direction === "row" ? this.props.dividerWidth : "auto",
-        minWidth:
-          this.props.direction === "row" ? this.props.dividerWidth : "auto",
-        maxWidth:
-          this.props.direction === "row" ? this.props.dividerWidth : "auto",
-        height:
-          this.props.direction === "column" ? this.props.dividerWidth : "auto",
-        minHeight:
-          this.props.direction === "column" ? this.props.dividerWidth : "auto",
-        maxHeight:
-          this.props.direction === "column" ? this.props.dividerWidth : "auto",
-        flexGrow: 0,
-        position: "relative"
-      },
-      handle: {
-        position: "absolute",
-        width: this.props.direction === "row" ? this.getHandleWidth() : "100%",
-        height:
-          this.props.direction === "column" ? this.getHandleWidth() : "100%",
-        left: this.props.direction === "row" ? this.getHandleOffset() : 0,
-        top: this.props.direction === "column" ? this.getHandleOffset() : 0,
-        backgroundColor: this.props.showHandles
-          ? "rgba(0,128,255,0.25)"
-          : "auto",
-        cursor: this.props.direction === "row" ? "col-resize" : "row-resize",
-        zIndex: 100
-      }
-    };
-    Object.assign(style.divider, { backgroundColor: this.props.borderColor });
-
-    // Add custom class if dragging
-    var className = "divider";
-    if (this.state.dragging) {
-      className += " dragging";
+    for (let i = 0; i < initialChildren.length; i++) {
+      const panelStyle = this.getPanelStyle(i);
+      const newPanel = this.createPanel({ panelStyle, index: i, initialChildren });
+      newChildren.push(newPanel);
+      this.maybeDivide({ initialChildren, newChildren, index: i });
     }
 
     return (
       <div
-        className={className}
-        style={style.divider}
-        onMouseDown={this.onMouseDown}
-        onTouchStart={this.onTouchStart}
+        className="panelGroup"
+        style={style.container}
+        ref={(node) => {
+          this.node = node;
+        }}
       >
-        <div style={style.handle} />
+        {newChildren}
       </div>
     );
   }
 }
-
-Divider.defaultProps = {
-  dividerWidth: 1,
-  handleBleed: 4
-};
-
-export default PanelGroup;
