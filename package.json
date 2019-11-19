@@ -1,6 +1,6 @@
 {
   "name": "react-panelgroup",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "react-panelgroup React component",
   "main": "lib/index.js",
   "jsnext:main": "es/index.js",
@@ -22,7 +22,6 @@
     "lint": "eslint --quiet ./**/*.js"
   },
   "dependencies": {
-    "debug-fabulous": "^1.1.0",
     "prop-types": "^15.6.1"
   },
   "peerDependencies": {

@@ -3,11 +3,8 @@ import PropTypes from 'prop-types';
 
 import Panel from './Panel';
 import Divider from './Divider';
-import Debug from '../debug';
 
 export { Divider, Panel };
-
-const debug = Debug.spawn('PanelGroup');
 
 export default class PanelGroup extends React.Component {
   static defaultProps = {
@@ -298,8 +295,9 @@ export default class PanelGroup extends React.Component {
       (this.props.direction === 'column' ? boundingRect.height : boundingRect.width) -
       this.props.spacing * (this.props.children.length - 1);
     if (Math.abs(boundingSize - masterSize) <= 0.01) {
-      debug(() => ({ panels }));
-      debug(() => `ERROR! SIZES DON'T MATCH!: ${masterSize}, ${boundingSize}`);
+      // Debug log
+      // console.log({ panels }, `ERROR! SIZES DON'T MATCH!: ${masterSize}, ${boundingSize}`)
+
       // 2) Rectify the situation by adding all the unacounted for space to the first panel
       panels[panelIndex].size += boundingSize - masterSize;
     }
