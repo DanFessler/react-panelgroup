@@ -9,7 +9,9 @@ export default class Divider extends React.Component {
     panelID: PropTypes.number.isRequired,
     handleResize: PropTypes.func.isRequired,
     showHandles: PropTypes.bool,
-    borderColor: PropTypes.string
+    borderColor: PropTypes.string,
+    onResizeStart: PropTypes.func,
+    onResizeEnd: PropTypes.func
   };
 
   static defaultProps = {
@@ -17,7 +19,9 @@ export default class Divider extends React.Component {
     handleBleed: 4,
     direction: undefined,
     showHandles: false,
-    borderColor: undefined
+    borderColor: undefined,
+    onResizeStart: undefined,
+    onResizeEnd: undefined
   };
 
   constructor(...args) {
