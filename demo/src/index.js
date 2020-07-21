@@ -168,41 +168,4 @@ let Content = function(props) {
   return <div style={{ padding: 8 }}>{props.children}</div>;
 };
 
-class Demo1 extends React.Component {
-  state = {count:0, panels:[
-    {
-      size: 512,
-      minSize: 50,
-      resize: "stretch",
-    },
-    {
-      size: 512,
-      minSize: 50,
-      resize: "dynamic",
-    }
-  ]}
-  // constructor(props) {
-  //   super(props)
-  //   this.state = {count:0}
-  // }
-
-  render() {
-    return (
-      [this.state.count,
-      <div style={{ height: 640, border: "1px solid black" }} onMouseMove={()=>{this.setState({count:this.state.count+1})}}>
-        <PanelGroup
-          borderColor="#DDD"
-          spacing={2}
-          panelWidths={this.state.panels}
-          // onUpdate={(panels)=>{this.setState({panels:panels})}}
-          onUpdate={(panels)=>{this.setState({panels:panels.map((panel)=>({...panel}))})}}
-        >
-          <Content>panel 1</Content>
-          <Content>panel 2</Content>
-        </PanelGroup>
-      </div>]
-    );
-  }
-}
-
-render(<Demo1 />, document.querySelector("#demo"));
+render(<Demo />, document.querySelector("#demo"));
