@@ -449,7 +449,8 @@ export default class PanelGroup extends React.Component {
     }
     size = this.props.direction === 'column' ? size.y : size.x;
     if (size !== this.state.panels[panelIndex].size) {
-      const tempPanels = this.state.panels;
+      const tempPanels = this.state.panels.map(panel => ({ ...panel }));
+
       // make sure we can actually resize this panel this small
       if (size < tempPanels[panelIndex].minSize) {
         let diff = tempPanels[panelIndex].minSize - size;
@@ -473,6 +474,7 @@ export default class PanelGroup extends React.Component {
         tempPanels[panelIndex].size = size;
       }
       this.setState({ panels: tempPanels });
+      this.onUpdate(tempPanels);
 
       if (panelIndex > 0) {
         this.handleResize(panelIndex - 1, { x: 0, y: 0 });
