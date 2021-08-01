@@ -172,7 +172,7 @@ export default class PanelGroup extends React.Component {
     return {
       container,
       panel: {
-        flexGrow: 0,
+        flexGrow: 0.001,
         display: 'flex'
       }
     };
@@ -191,8 +191,8 @@ export default class PanelGroup extends React.Component {
       [direction === 'row' ? 'height' : 'width']: '100%',
       [`min${this.getSizeDirection(true)}`]: panel.resize === 'stretch' ? 0 : panel.size,
 
-      flexGrow: panel.resize === 'stretch' ? 1 : 0,
-      flexShrink: panel.resize === 'stretch' ? 1 : 0,
+      flexGrow: panel.resize === 'stretch' ? 1 : 0.001,
+      flexShrink: panel.resize === 'stretch' ? 1 : 0.001,
       display: 'flex',
       overflow: 'hidden',
       position: 'relative',
