@@ -35,7 +35,7 @@
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
     "gh-pages": "^0.11.0",
-    "nwb": "0.22.x",
+    "nwb": "0.25.x",
     "react": "^16.0.0",
     "react-dom": "^16.0.0"
   },
