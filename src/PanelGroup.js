@@ -39,7 +39,7 @@ export default class PanelGroup extends React.Component {
   }
 
   // reload panel configuration if props update
-  componentWillReceiveProps(nextProps) {
+  UNSAFE_componentWillReceiveProps(nextProps) {
     const nextPanels = nextProps.panelWidths;
 
     // Only update from props if we're supplying the props in the first place
